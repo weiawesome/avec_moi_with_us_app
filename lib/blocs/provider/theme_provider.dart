@@ -1,4 +1,4 @@
-import 'package:avec_moi_with_us/service/utils/mode_storage.dart';
+import 'package:avec_moi_with_us/services/utils/mode_storage.dart';
 import 'package:flutter/material.dart';
 
 

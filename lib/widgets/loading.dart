@@ -6,10 +6,9 @@ class Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top:30),
       alignment: Alignment.center,
-      child: CupertinoActivityIndicator(
-        color: Theme.of(context).hintColor,
+      child: CircularProgressIndicator(
+        color: Theme.of(context).canvasColor,
       ),
     );
   }

@@ -1,3 +1,8 @@
+import "package:avec_moi_with_us/models/user/information/information.dart";
+import "package:avec_moi_with_us/services/user/information.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 
@@ -17,20 +22,54 @@ class _EditInformationPageState extends State<EditInformationPage> {
   Map<int,String> genderIndex={
     0:"male",1:"female",2:"other"
   };
+  Map<String,int> indexGender={
+    "male":0,"female":1,"other":2
+  };
   Widget formatGenderUI(int index){
     final String gender=genderIndex[index]!;
     return Container(padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 3),child: Text(gender,style: Theme.of(context).textTheme.displaySmall));
   }
+  InformationService i=InformationService();
   @override
   void initState() {
     super.initState();
     _controller= TextEditingController();
-    _controller.text="name";
+    _refresh();
+  }
 
-    originalName="name";
-    originalGender="male";
-    groupValue=0;
-}
+  Future<void> _refresh() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try{
+        ResponseInformation r=await i.getInformation();
+        originalName=r.name;
+        originalGender=r.gender;
+        _controller.text=r.name;
+        setState(() {
+          groupValue=indexGender[r.gender]!;
+        });
+      } on AuthException{
+        toastError(context, "權限錯誤", "請重新登入");
+        Navigator.pop(context);
+      } catch (e){
+        toastError(context, "未知錯誤", "出現未知錯誤 請稍後再嘗試");
+        Navigator.pop(context);
+      }
+
+    });
+  }
+
+  Future<void> edit() async {
+    try{
+      await i.editInformation(RequestEditInformation(_controller.text, genderIndex[groupValue]!));
+      toastInfo(context, "成功更新", "成功修改個人資訊");
+      Navigator.pop(context);
+    } on AuthException{
+      toastError(context, "權限錯誤", "請重新登入");
+    } catch (e){
+      toastError(context, "更新錯誤", "出現未知錯誤 請稍後再嘗試");
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,34 +88,9 @@ class _EditInformationPageState extends State<EditInformationPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const TitleBarSubPage(title: "Edit Information"),
                 Flexible(
-                  flex:2,
-                  child: Row(
-                    children: [
-                      IconButton(onPressed: (){
-                        Navigator.pop(context);
-                      },
-                          icon: Icon(Icons.arrow_back_ios_rounded)
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                          margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Text("Edit Information",style: Theme.of(context).textTheme.titleMedium,),
-                        ),
-                      ),
-                    ],
-
-                  ),
-                ),
-                Flexible(
-                  flex:10,
+                  flex:13,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -84,7 +98,7 @@ class _EditInformationPageState extends State<EditInformationPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Expanded(flex: 1,child: Container(),),
+
                         Expanded(
                           flex: 2,
                           child: Container(
@@ -127,7 +141,6 @@ class _EditInformationPageState extends State<EditInformationPage> {
                             ),
                           ),
                         ),
-                        Expanded(flex: 1,child: Container(),),
                         Expanded(
                           flex: 2,
                           child: Container(
@@ -167,7 +180,6 @@ class _EditInformationPageState extends State<EditInformationPage> {
                             ),
                           ),
                         ),
-                        Expanded(flex: 1,child: Container(),),
 
                       ],
                     ),
@@ -176,9 +188,11 @@ class _EditInformationPageState extends State<EditInformationPage> {
                 Flexible(
                   flex:2,
                   child: Container(
-                    margin: EdgeInsets.only(bottom: 30.0),
+                    alignment: Alignment.center,
                     child: ElevatedButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          edit();
+                        },
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
                           shape: MaterialStateProperty.all<OutlinedBorder>(

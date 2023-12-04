@@ -10,10 +10,10 @@ class ApiRoutes{
   static const String preferenceUrl="${apiBaseUrl}user/preference";
   static const String preferenceTypeUrl="${apiBaseUrl}user/preference/type";
 
-  static const String movieUrl="${apiBaseUrl}/movie";
-  static const String recentlyHotUrl="${apiBaseUrl}/movie/recently_hot";
-  static const String recentlyViewUrl="${apiBaseUrl}/movie/recently_view";
-  static const String recommendUrl="${apiBaseUrl}/movie/recommend";
-  static const String likeUrl="${apiBaseUrl}/movie/like";
-  static const String searchUrl="${apiBaseUrl}/movie/search";
+  static const String movieUrl="${apiBaseUrl}movie";
+  static const String recentlyHotUrl="${apiBaseUrl}movie/recently_hot";
+  static const String recentlyViewUrl="${apiBaseUrl}movie/recently_view";
+  static const String recommendUrl="${apiBaseUrl}movie/recommend";
+  static const String likeUrl="${apiBaseUrl}movie/like";
+  static const String searchUrl="${apiBaseUrl}movie/search";
 }

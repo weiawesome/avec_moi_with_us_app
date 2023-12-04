@@ -1,4 +1,4 @@
-import 'package:avec_moi_with_us/service/utils/jwt_storage.dart';
+import 'package:avec_moi_with_us/services/utils/jwt_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 abstract class JWTEvent {}

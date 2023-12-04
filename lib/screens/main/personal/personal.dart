@@ -1,4 +1,7 @@
+import "package:avec_moi_with_us/services/user/authentication.dart";
 import "package:avec_moi_with_us/utils/routes.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/material.dart";
 
 class PersonalPage extends StatefulWidget {
@@ -8,24 +11,23 @@ class PersonalPage extends StatefulWidget {
 }
 
 class _PersonalPageState extends State<PersonalPage> {
+  AuthenticationService a=AuthenticationService();
+  Future<void> logout() async {
+    try{
+      await a.logout();
+    }finally{
+      toastInfo(context, "成功更新", "成功登出");
+      Navigator.popAndPushNamed(context, Routes.login);
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        Flexible(
-          flex: 2,
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-            margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: Text("Personal Information",style: Theme.of(context).textTheme.titleMedium,),
-          ),
-        ),
+        const TitleBar(title: "Personal Information"),
         Flexible(
           flex: 5,
           child: Container(
@@ -35,7 +37,7 @@ class _PersonalPageState extends State<PersonalPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Icon(Icons.face,size: 90,color: Colors.black,),
-                Text("個人資訊")
+                Text("個人資訊",style: Theme.of(context).textTheme.displayMedium,)
               ],
             ),
           ),
@@ -52,28 +54,28 @@ class _PersonalPageState extends State<PersonalPage> {
                   onPressed: (){
                     Navigator.pushNamed(context, Routes.edit_information);
                   },
-                  child: Text("編輯個人資訊")
+                  child: const Text("編輯個人資訊")
                 ),
-                Divider(),
+                const Divider(),
                 TextButton(
                     onPressed: (){
                       Navigator.pushNamed(context, Routes.edit_password);
                     },
-                    child: Text("更改密碼")
+                    child: const Text("更改密碼")
                 ),
-                Divider(),
+                const Divider(),
                 TextButton(
                     onPressed: (){
                       Navigator.pushNamed(context, Routes.edit_preference);
                     },
                     child: Text("更改偏好項目")
                 ),
-                Divider(),
+                const Divider(),
                 TextButton(
                     onPressed: (){
                       Navigator.pushNamed(context, Routes.history);
                     },
-                    child: Text("歷史紀錄")
+                    child:  const Text("歷史紀錄")
                 ),
               ],
             ),
@@ -82,9 +84,9 @@ class _PersonalPageState extends State<PersonalPage> {
         Flexible(
           flex:2,
           child: ElevatedButton(
-              onPressed: (){},
+              onPressed: (){logout();},
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)), // 设置背景颜色
+                backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
                 shape: MaterialStateProperty.all<OutlinedBorder>(
                   RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0),
@@ -94,7 +96,7 @@ class _PersonalPageState extends State<PersonalPage> {
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
                 ),
               ),
-              child: Text("LOG OUT",style: TextStyle(color: Colors.white),)
+              child: const Text("LOG OUT",style: TextStyle(color: Colors.white),)
           ),
         ),
       ],

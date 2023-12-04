@@ -1,6 +1,11 @@
-import "package:avec_moi_with_us/utils/routes.dart";
+import "package:avec_moi_with_us/models/user/authentication/signup.dart";
+import "package:avec_moi_with_us/services/user/authentication.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/loading.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -21,7 +26,9 @@ class _SignUpPageState extends State<SignUpPage> {
   final FocusNode _emailFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
   final FocusNode _confirmPasswordFocus = FocusNode();
-  void signup(){
+  bool loading=false;
+
+  Future<void> signup() async {
     if (_nameKey.currentState!.validate()==false) {
       FocusScope.of(context).requestFocus(_nameFocus);
     }else if (_mailKey.currentState!.validate()==false) {
@@ -32,8 +39,32 @@ class _SignUpPageState extends State<SignUpPage> {
       FocusScope.of(context).requestFocus(_confirmPasswordFocus);
     } else{
       FocusScope.of(context).unfocus();
-      print("log in");
-      Navigator.pushNamed(context, Routes.login);
+      AuthenticationService s=AuthenticationService();
+      setState(() {
+        loading=true;
+      });
+      try{
+        await Future.delayed(const Duration(seconds: 1));
+        await s.signup(RequestSignup(
+            _emailController.text,
+            _passwordController.text,
+            _nameController.text,
+            genderIndex[groupValue]!)
+        );
+        _emailController.clear();
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+        groupValue=0;
+        Navigator.pop(context);
+        toastInfo(context, "註冊成功", "已完成註冊 輸入帳密以完成登入");
+      } on AuthException {
+        toastError(context, '驗證錯誤',"該組帳戶已註冊");
+      } catch (e){
+        toastError(context, '未知錯誤', '請稍後再嘗試');
+      }
+      setState(() {
+        loading=false;
+      });
     }
 
   }
@@ -69,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(
+                  Expanded(
                     flex: 3,
                     child: Center(
                       child: Text(
@@ -79,7 +110,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
-                  Expanded(
+                  loading?
+                  Expanded(flex:12,child: Loading()):Expanded(
                       flex: 10,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -313,7 +345,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ],
                       )
                   ),
-                  Expanded(
+                  loading?Container():Expanded(
                     flex: 2,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -338,7 +370,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       ],
                     ),
                   ),
-
                 ]
             ),
           ),

@@ -1,3 +1,8 @@
+import "package:avec_moi_with_us/models/user/information/password.dart";
+import "package:avec_moi_with_us/services/user/information.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 
@@ -29,11 +34,25 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
     super.dispose();
   }
 
+  InformationService i=InformationService();
+  Future<void> edit() async {
+    try{
+      await i.editPassword(RequestEditPassword(oldPasswordController.text, newPasswordController.text));
+      toastInfo(context, "成功更新", "成功修改個人密碼");
+      Navigator.pop(context);
+    } on AuthException{
+      toastError(context, "權限錯誤", "請重新登入");
+    } catch (e){
+      toastError(context, "更新錯誤", "出現未知錯誤 請稍後再嘗試");
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     void submitForm() {
       if (_formKeyOldPassword.currentState!.validate() && _formKeyNewPassword.currentState!.validate() && _formKeyConfirmPassword.currentState!.validate()) {
-        print("GAGA");
+        edit();
       }
     }
 
@@ -52,34 +71,9 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const TitleBarSubPage(title: "Edit Password"),
                 Flexible(
-                  flex:2,
-                  child: Row(
-                    children: [
-                      IconButton(onPressed: (){
-                        Navigator.pop(context);
-                      },
-                          icon: Icon(Icons.arrow_back_ios_rounded)
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                          margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Text("Edit Password",style: Theme.of(context).textTheme.titleMedium,),
-                        ),
-                      ),
-                    ],
-
-                  ),
-                ),
-                Flexible(
-                  flex:10,
+                  flex:13,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
                     child: Column(
@@ -237,10 +231,9 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                           ),
                         ),
                         Flexible(
-                          flex: 2,
+                          flex: 1,
                           child: Container()
                         )
-
                       ],
                     ),
                   ),
@@ -248,9 +241,9 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                 Flexible(
                   flex:2,
                   child: Container(
-                    margin: EdgeInsets.only(bottom: 30.0),
+                    alignment: Alignment.center,
                     child: ElevatedButton(
-                        onPressed: (){},
+                        onPressed: (){submitForm();},
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
                           shape: MaterialStateProperty.all<OutlinedBorder>(

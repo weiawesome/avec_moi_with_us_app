@@ -18,7 +18,47 @@ Map<int,String> genreIndexPair= {
     10751:"家庭",
     10752:"戰爭",
 };
-void main(){
-  print(genreIndexPair.length);
-  print((genreIndexPair.keys.toList())[0]);
+
+class PreferencePair {
+    String value;
+    int id;
+
+    PreferencePair({required this.value, required this.id});
+
+    factory PreferencePair.fromJson(Map<String, dynamic> json) {
+        return PreferencePair(
+            value: json['value'],
+            id: json['id'],
+        );
+    }
 }
+
+class ResponsePreference {
+    List<PreferencePair> pairs;
+
+    ResponsePreference({required this.pairs});
+
+    factory ResponsePreference.fromJson(Map<String, dynamic> json) {
+        if (json["pairs"]==null){
+            return ResponsePreference(pairs: []);
+        }
+        List<dynamic> jsonPairs = json['pairs'];
+        List<PreferencePair> pairs = jsonPairs.map((pair) => PreferencePair.fromJson(pair)).toList();
+        return ResponsePreference(pairs: pairs);
+    }
+}
+
+class RequestPreference{
+    List<int> genres;
+
+    RequestPreference({required this.genres});
+
+    Map<String,dynamic> formatJson(){
+        return {
+            "genres":genres
+        };
+    }
+}
+
+
+

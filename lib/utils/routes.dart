@@ -12,7 +12,7 @@ class Routes {
   static const login="/login";
   static const signup="/signup";
   static const add_preference="/add_preference";
-  static const home="/";
+  static const index="/";
   static const search="/search";
   static const trending="/trending";
   static const information="/information";
@@ -26,32 +26,26 @@ class Routes {
 class RouteGenerator {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.home:
+      case Routes.index:
         return MaterialPageRoute(builder: (_) => const MainHomePage());
       case Routes.login:
-        return MaterialPageRoute(builder: (_) => const MainHomePage());
+        return MaterialPageRoute(builder: (_) => const HomePage());
       case Routes.signup:
         return MaterialPageRoute(builder: (_) => const SignUpPage());
-      case Routes.add_preference:
-        return MaterialPageRoute(builder: (_) => const HomePage());
       case Routes.search:
-        return MaterialPageRoute(builder: (_) => const HomePage());
-      case Routes.trending:
-        return MaterialPageRoute(builder: (_) => const HomePage());
-      case Routes.information:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const MainHomePage());
       case Routes.edit_password:
-        return MaterialPageRoute(builder: (_) => EditPasswordPage());
+        return MaterialPageRoute(builder: (_) => const EditPasswordPage());
       case Routes.edit_information:
         return MaterialPageRoute(builder: (_) => const EditInformationPage());
       case Routes.edit_preference:
         return MaterialPageRoute(builder: (_) => const EditPreferencePage());
       case Routes.history:
         return MaterialPageRoute(builder: (_) => const HistoryPage());
-      case Routes.favorite:
-        return MaterialPageRoute(builder: (_) => const HomePage());
       case Routes.specific_movie:
-        return MaterialPageRoute(builder: (_) => const SpecificMoviePage());
+        return MaterialPageRoute(
+          builder: (_) => SpecificMoviePage(movieId: settings.arguments as String),
+        );
       default:
         return null;
     }

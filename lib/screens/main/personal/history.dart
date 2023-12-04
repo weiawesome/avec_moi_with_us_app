@@ -1,6 +1,10 @@
+import "package:avec_moi_with_us/blocs/provider/history_movie_provider.dart";
+import "package:avec_moi_with_us/services/movie/movie.dart";
+import "package:avec_moi_with_us/widgets/image_button.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
 import "package:flutter/material.dart";
 import "package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart";
-import "package:stroke_text/stroke_text.dart";
+import "package:provider/provider.dart";
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -9,44 +13,37 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
+  MovieService m=MovieService();
+
   final _scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.9) {
+        int page=context.read<HistoryMovieProvider>().currentPage+1;
+        context.read<HistoryMovieProvider>().insertMovie(await m.getRecentlyViewMovie(page));
+      }
+    });
+  }
+
   Future<void> _refresh() async {
-    return await Future.delayed(const Duration(seconds: 2));
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<HistoryMovieProvider>().emptyMovie();
+      context.read<HistoryMovieProvider>().insertMovie(await m.getRecentlyViewMovie(1));
+    });
   }
   @override
   Widget build(BuildContext context) {
+    final historyMovieProvider = Provider.of<HistoryMovieProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
           child: Column(
             children: [
-              Flexible(
-                flex:2,
-                child: Row(
-                  children: [
-                    IconButton(onPressed: (){
-                      Navigator.pop(context);
-                    },
-                        icon: Icon(Icons.arrow_back_ios_rounded)
-                    ),
-                    Flexible(
-                      flex: 2,
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                        margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: Text("History",style: Theme.of(context).textTheme.titleMedium,),
-                      ),
-                    ),
-                  ],
-
-                ),
-              ),
+              const TitleBarSubPage(title: "History"),
               Flexible(
                 flex: 1,
                 child: Container(
@@ -65,57 +62,9 @@ class _HistoryPageState extends State<HistoryPage> {
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     controller: _scrollController,
-                    itemCount: 10,
+                    itemCount: historyMovieProvider.movieList.length,
                     itemBuilder: (context, index) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(top:10.0),
-                            child: Container(
-                              // margin: EdgeInsets.symmetric(),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Image.network(
-                                    'https://image.tmdb.org/t/p/original/7Wa0N9bmUznYQzzNAdTAN0OgQ1w.jpg',
-                                    width:200,
-                                    fit: BoxFit.contain,
-                                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      } else {
-                                        return Center(
-                                          widthFactor: 1,
-                                          heightFactor: 1,
-                                          child: CircularProgressIndicator(
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                      return Icon(Icons.error);
-                                    },
-                                  ),
-                                  Container(
-                                    padding:EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text("片名 : 咒術迴戰", style: Theme.of(context).textTheme.bodySmall),
-                                        Text("發行年分 : 2017", style: Theme.of(context).textTheme.bodySmall),
-                                        Text("評分 : 7.5分", style: Theme.of(context).textTheme.bodySmall),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
+                      return SingleImageButton(movieId: historyMovieProvider.movieList[index].movieId,imageUrl: historyMovieProvider.movieList[index].resource,year: historyMovieProvider.movieList[index].releaseYear,title: historyMovieProvider.movieList[index].title,score: historyMovieProvider.movieList[index].score,);
                     },
                   ),
                 ),

@@ -1,47 +1,62 @@
-import "package:avec_moi_with_us/models/user/information/preference.dart";
-import "package:flutter/cupertino.dart";
+import "package:avec_moi_with_us/models/movie/movie_specific.dart";
+import "package:avec_moi_with_us/services/movie/movie.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/material.dart";
 
 class SpecificMoviePage extends StatefulWidget {
-  const SpecificMoviePage({super.key});
+  final String movieId;
+  const SpecificMoviePage({super.key,required this.movieId});
   @override
   State<SpecificMoviePage> createState() => _SpecificMoviePageState();
 }
 
 class _SpecificMoviePageState extends State<SpecificMoviePage> {
-  Set<int> selectedItems = <int>{12,35};
-  Set<String> titleItems=<String>{"Магічна битва",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "جوجيتسو كايسن",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "ג'וג'וטסו קאיזן",
-    "Chú Thuật Hồi Chiến",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "جوجوتسو کایسن",
-    "جوجيتسو كايسن",
-    "Jujutsu Kaisen",
-    "주술회전",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "Магическая битва",
-    "Jujutsu Kaisen",
-    "咒术回战",
-    "Jujutsu Kaisen",
-    "咒術迴戰",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "咒術迴戰",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "Jujutsu Kaisen",
-    "มหาเวทย์ผนึกมาร"};
-  List<String> directorItems=["HAHA","HAHA","HAHA","HAHA","HAHA"];
+  late ResponseSpecificMovie r;
+  bool loading=true;
+  bool like=false;
+  MovieService m=MovieService();
+
+  Future<void> likeMovie() async {
+    try{
+      if (like){
+        await m.addLikeMovie(widget.movieId);
+      } else{
+        await m.deleteLikeMovie(widget.movieId);
+      }
+    } on AuthException{
+      toastError(context, "權限錯誤", "請重新登入");
+      Navigator.pop(context);
+    } catch (e){
+      toastError(context, "未知錯誤", "出現未知錯誤 請稍後再嘗試");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getInformation();
+  }
+  Future<void> getInformation() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      r=await m.getSpecificMovie(widget.movieId);
+      try{
+        await m.getIsLikeMovie(widget.movieId);
+        setState(() {
+          like=true;
+        });
+      } catch(e){
+        setState(() {
+          like=false;
+        });
+      }
+      setState(() {
+        loading=false;
+      });
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,47 +74,31 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                TitleBarSubPage(title: "Specific Movie"),
+                loading?
                 Flexible(
-                  flex:2,
-                  child: Row(
-                    children: [
-                      IconButton(onPressed: (){
-                        Navigator.pop(context);
-                      },
-                          icon: Icon(Icons.arrow_back_ios_rounded)
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                          margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Text("Specific Movie",style: Theme.of(context).textTheme.titleMedium,),
-                        ),
-                      ),
-                    ],
-
+                  flex:16,
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(
+                      color: Color(0xFFFD6868),
+                    ),
                   ),
-                ),
-                Flexible(
+                ): Flexible(
                   flex:14,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
+                        SizedBox(
                           height: 200,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Image.network(
-                                'https://image.tmdb.org/t/p/original/7Wa0N9bmUznYQzzNAdTAN0OgQ1w.jpg',
+                                r.resource,
                                 width: 150,
                                 height: 200,
                                 fit: BoxFit.contain,
@@ -107,7 +106,7 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                   if (loadingProgress == null) {
                                     return child;
                                   } else {
-                                    return Container(
+                                    return const SizedBox(
                                       height: 200,
                                       width: 150,
                                       child: Center(
@@ -120,159 +119,133 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                   }
                                 },
                                 errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                  return Icon(Icons.error);
+                                  return const SizedBox(
+                                      width: 150,
+                                      height: 200,
+                                      child: Icon(Icons.error,size: 50,)
+                                  );
                                 },
                               ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("片名 : 咒術迴戰", style: Theme.of(context).textTheme.bodyLarge),
-                                  Text("原片名 : 咒術迴戰", style: Theme.of(context).textTheme.bodyLarge),
-                                  Text("發行年分 : 2017", style: Theme.of(context).textTheme.bodyLarge),
-                                  Text("評分 : 7.5分", style: Theme.of(context).textTheme.bodyLarge),
+                                  Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
+                                  Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
+                                  Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
                                 ],
                               )
                             ],
                           ),
                         ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("分類",style: Theme.of(context).textTheme.headlineMedium,),
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: selectedItems.map((e){
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            color: Color(0xFFFFE27C)
-                                        ),
-                                        margin: EdgeInsets.only(right: 15.0),
-                                        padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                        child: Text(genreIndexPair[e].toString(),style: Theme.of(context).textTheme.bodyMedium)
-                                      );
-                                    }).toList(),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("其他譯名",style: Theme.of(context).textTheme.headlineMedium,),
-                              ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: titleItems.map((e){
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("分類",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: r.categories.map((e){
                                     return Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20.0),
-                                            color: Color(0xFFFFE27C)
-                                        ),
-                                        margin: EdgeInsets.only(right: 15.0),
-                                        padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                        child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20.0),
+                                          color: const Color(0xFFFFE27C)
+                                      ),
+                                      margin: const EdgeInsets.only(right: 15.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                      child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
                                     );
                                   }).toList(),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("簡介",style: Theme.of(context).textTheme.headlineMedium,),
                               ),
-                              Text("少年戰鬥著 —「為了尋求正確的死亡」辛酸、後悔、恥辱人類產生的負面情感，化為詛咒，潛入日常生活詛咒是蔓延於世界的禍源，最糟糕的情況下，會讓人類踏入死亡並且，詛咒只能以詛咒祓除擁有驚人身體能力的少年·虎杖悠仁原本過著普通的高中生活有一天，為了拯救被「詛咒」襲擊的同伴，他吃下了特級咒物「兩面宿儺之指」，讓詛咒寄宿於自己的靈魂之中與詛咒「兩面宿儺」共有肉體的虎杖，在最強咒術師五條悟的指引下，進入對詛咒專門機關「東京都立咒術高等專門學校」……。為了祓除詛咒而成為詛咒的少年，無法回頭的壯闊故事開始了。",style: Theme.of(context).textTheme.bodyMedium),
-                            ],
-                          ),
+                            )
+                          ],
                         ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("導演",style: Theme.of(context).textTheme.headlineMedium,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("其他譯名",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: r.titles.map((e){
+                                  return Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20.0),
+                                          color: Color(0xFFFFE27C)
+                                      ),
+                                      margin: EdgeInsets.only(right: 15.0),
+                                      padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                      child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
+                                  );
+                                }).toList(),
                               ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: directorItems.map((e){
-                                    return Container(
-                                        margin: EdgeInsets.only(right: 15.0),
-                                        padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                        child: Column(
-                                          children: [
-                                            Image.network(
-                                              "https://image.tmdb.org/t/p/original/40n61jOMzHpDSnzLBQOSEEWlxEw.jpg",
-                                              width: 100,
-                                              height: 150,
-                                              fit: BoxFit.contain,
-                                              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                                if (loadingProgress == null) {
-                                                  return child;
-                                                } else {
-                                                  return Center(
-                                                    widthFactor: 1,
-                                                    heightFactor: 1,
-                                                    child: CircularProgressIndicator(),
-                                                  );
-                                                }
-                                              },
-                                              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                                return Icon(Icons.error);
-                                              },
-                                            ),
-                                            Text(e,style: Theme.of(context).textTheme.bodyMedium),
-                                          ],
-                                        ),
-                                    );
-                                  }).toList(),
-                                ),
-                              )
-                            ],
-                          ),
+                            )
+                          ],
                         ),
-                        Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("演員",style: Theme.of(context).textTheme.headlineMedium,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("評分",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: r.rankScores.map((e){
+                                  return Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(20.0),
+                                          color: const Color(0xFFFFE27C)
+                                      ),
+                                      margin: EdgeInsets.only(right: 15.0),
+                                      padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                      child: Text("${e.organization} : ${e.score} 分",style: Theme.of(context).textTheme.bodyMedium),
+                                  );
+                                }).toList(),
                               ),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: directorItems.map((e){
-                                    return Container(
+                            )
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("簡介",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            Text(r.introduction==""?"未收錄":r.introduction,style: Theme.of(context).textTheme.bodyMedium),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("導演",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: r.directors.map((e){
+                                  return Container(
                                       margin: EdgeInsets.only(right: 15.0),
                                       padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
                                       child: Column(
                                         children: [
                                           Image.network(
-                                            "https://image.tmdb.org/t/p/original/40n61jOMzHpDSnzLBQOSEEWlxEw.jpg",
+                                            e.resource,
                                             width: 100,
                                             height: 150,
                                             fit: BoxFit.contain,
@@ -280,37 +253,106 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                               if (loadingProgress == null) {
                                                 return child;
                                               } else {
-                                                return Center(
-                                                  widthFactor: 1,
-                                                  heightFactor: 1,
-                                                  child: CircularProgressIndicator(),
+                                                return const SizedBox(
+                                                  width: 100,
+                                                  height: 150,
+                                                  child: Center(
+                                                    widthFactor: 1,
+                                                    heightFactor: 1,
+                                                    child: CircularProgressIndicator(
+                                                    ),
+                                                  ),
                                                 );
                                               }
                                             },
                                             errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                              return Icon(Icons.error);
+                                              return const SizedBox(
+                                                  width: 100,
+                                                  height: 150,
+                                                  child: Icon(Icons.error,size: 50,)
+                                              );
                                             },
                                           ),
-                                          Text(e,style: Theme.of(context).textTheme.bodyMedium),
+                                          Text(e.name,style: Theme.of(context).textTheme.bodyMedium),
                                         ],
                                       ),
-                                    );
-                                  }).toList(),
-                                ),
-                              )
-                            ],
-                          ),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("演員",style: Theme.of(context).textTheme.headlineMedium,),
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: r.actors.map((e){
+                                  return Container(
+                                    margin: EdgeInsets.only(right: 15.0),
+                                    padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                    child: Column(
+                                      children: [
+                                        Image.network(
+                                          e.resource,
+                                          width: 100,
+                                          height: 150,
+                                          fit: BoxFit.contain,
+                                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            } else {
+                                              return const SizedBox(
+                                                width: 100,
+                                                height: 150,
+                                                child: Center(
+                                                  widthFactor: 1,
+                                                  heightFactor: 1,
+                                                  child: CircularProgressIndicator(
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                                            return const SizedBox(
+                                                width: 100,
+                                                height: 150,
+                                                child: Icon(Icons.error,size: 50,)
+                                            );
+                                          },
+                                        ),
+                                        Text(e.name,style: Theme.of(context).textTheme.bodyMedium),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            )
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
-                Flexible(
+                loading?
+                Container():Flexible(
                     flex:2,
-                    child: Container(
+                    child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                          onPressed: (){},
+                          onPressed: (){
+                            setState(() {
+                              like=!like;
+                            });
+                            likeMovie();
+                          },
                           style: ButtonStyle(
                             backgroundColor: MaterialStateProperty.all<Color>(const Color(
                                 0xFFFD6868)),
@@ -321,9 +363,9 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Icon(Icons.favorite_outline,size: 50,),
-                              Text("收藏"),
-                              Icon(Icons.favorite_outline,size: 50,),
+                              like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
+                              const Text("收藏"),
+                              like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
                             ],
                           ),
                       ),

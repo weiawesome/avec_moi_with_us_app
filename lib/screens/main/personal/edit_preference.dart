@@ -1,8 +1,11 @@
-import "dart:ffi";
-
 import "package:avec_moi_with_us/models/user/information/preference.dart";
+import "package:avec_moi_with_us/services/user/information.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/title.dart";
+import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
+
 
 class EditPreferencePage extends StatefulWidget {
   const EditPreferencePage({super.key});
@@ -11,7 +14,45 @@ class EditPreferencePage extends StatefulWidget {
 }
 
 class _EditPreferencePageState extends State<EditPreferencePage> {
-  Set<int> selectedItems = <int>{};
+  Set<int> selectedItems = {};
+  InformationService i=InformationService();
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try{
+        ResponsePreference r=await i.getPreference();
+        r.pairs.forEach((element) {selectedItems.add(element.id);});
+        setState(() {
+          selectedItems=selectedItems;
+        });
+      } on AuthException{
+        toastError(context, "權限錯誤", "請重新登入");
+        Navigator.pop(context);
+      } catch (e){
+        toastError(context, "未知錯誤", "出現未知錯誤 請稍後再嘗試");
+        Navigator.pop(context);
+      }
+
+    });
+  }
+
+  void edit(){
+    try{
+      i.editPreference(RequestPreference(genres: selectedItems.toList()));
+      toastInfo(context, "成功更新", "成功修改個人資訊");
+      Navigator.pop(context);
+    } on AuthException{
+      toastError(context, "權限錯誤", "請重新登入");
+    } catch (e){
+      toastError(context, "更新錯誤", "出現未知錯誤 請稍後再嘗試");
+    }
+
+  }
   final data = genreIndexPair.keys.toList();
   @override
   Widget build(BuildContext context) {
@@ -30,49 +71,25 @@ class _EditPreferencePageState extends State<EditPreferencePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const TitleBarSubPage(title: "Edit Preference"),
                 Flexible(
-                  flex:2,
-                  child: Row(
-                    children: [
-                      IconButton(onPressed: (){
-                        Navigator.pop(context);
-                      },
-                          icon: Icon(Icons.arrow_back_ios_rounded)
-                      ),
-                      Flexible(
-                        flex: 2,
-                        child: Container(
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-                          margin: EdgeInsets.symmetric(horizontal: 5.0,vertical: 10.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Text("Edit Preference",style: Theme.of(context).textTheme.titleMedium,),
-                        ),
-                      ),
-                    ],
-
-                  ),
-                ),
-                Flexible(
-                  flex:14,
+                  flex:13,
                   child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       crossAxisSpacing: 8.0,
                       mainAxisSpacing: 8.0,
                     ),
+                    itemCount: data.length,
                     itemBuilder: (context, index) {
-                      bool isSelected = selectedItems.contains(index);
+                      bool isSelected = selectedItems.contains(data[index]);
                       return InkWell(
                         onTap: () {
                           setState(() {
                             if (isSelected) {
-                              selectedItems.remove(index);
+                              selectedItems.remove(data[index]);
                             } else {
-                              selectedItems.add(index);
+                              selectedItems.add(data[index]);
                             }
                           });
                         },
@@ -84,27 +101,28 @@ class _EditPreferencePageState extends State<EditPreferencePage> {
                         ),
                       );
                     },
-                    // 資料的數量
-                    itemCount: data.length,
                   ),
                 ),
                 Flexible(
                   flex:2,
-                  child: ElevatedButton(
-                      onPressed: (){},
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
-                        shape: MaterialStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                        onPressed: (){edit();},
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
                           ),
                         ),
-                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                          const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
-                        ),
-                      ),
-                      child: Text("EDIT",style: TextStyle(color: Colors.white),)
-                  )
+                        child: Text("EDIT",style: TextStyle(color: Colors.white),)
+                    ),
+                  ),
                 ),
               ],
             ),

@@ -20,6 +20,7 @@ dependencies:
   http: ^1.1.0
   cached_network_image: ^3.3.0
   liquid_pull_to_refresh: ^3.0.1
+  toastification: ^1.1.0
 
 dev_dependencies:
   flutter_test:
