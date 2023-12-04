@@ -42,7 +42,7 @@ class ResponseSpecificMovie {
     }
     List<Celebrity> actors=[];
     if (json["actors"]!=null){
-      (json['actors'] as List<dynamic>)
+      actors=(json['actors'] as List<dynamic>)
           .map((celebrityJson) => Celebrity.fromJson(celebrityJson))
           .toList();
     }

@@ -126,15 +126,23 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                   );
                                 },
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
-                                  Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
-                                  Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge,softWrap: true,),
-                                ],
-                              )
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      child: Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                    Flexible(
+                                      child: Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                    Flexible(
+                                      child: Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),

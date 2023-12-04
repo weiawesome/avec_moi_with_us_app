@@ -24,7 +24,7 @@ class HotMovieProvider extends ChangeNotifier {
     return movieList;
   }
   void insertMovie(ResponseMovie data){
-    if (data.movieList.isNotEmpty) {
+    if (data.movieList.isNotEmpty && data.currentPage>currentPage) {
       movieList.addAll(data.movieList);
       totalPages=data.totalPages;
       currentPage=data.currentPage;
