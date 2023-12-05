@@ -2,11 +2,10 @@ import 'package:avec_moi_with_us/blocs/provider/history_movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/hot_movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/random_provider.dart';
+import 'package:avec_moi_with_us/blocs/provider/recommend_movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/theme_provider.dart';
 import 'package:avec_moi_with_us/blocs/utils/bloc_navigator.dart';
 import 'package:avec_moi_with_us/screens/home.dart';
-import 'package:avec_moi_with_us/screens/main/main_home.dart';
-import 'package:avec_moi_with_us/screens/main/personal/history.dart';
 import 'package:avec_moi_with_us/styles/custom_style.dart';
 import 'package:avec_moi_with_us/utils/routes.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +30,9 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (_) => HotMovieProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => RecommendMovieProvider(),
           ),
           ChangeNotifierProvider(
             create: (_) => SearchMovieProvider(),

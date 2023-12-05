@@ -31,10 +31,10 @@ class MovieService {
     }
   }
 
-  Future<ResponseMovie> getRecommendMovie(int page) async {
+  Future<ResponseMovie> getRecommendMovie() async {
     String? jwt=await jwtService.getJwt();
     final response = await httpClient.get(
-      Uri.parse("${ApiRoutes.recommendUrl}?page=$page"),
+      Uri.parse(ApiRoutes.recommendUrl),
       headers: {'Authorization': 'Bearer $jwt'},
     );
     if (response.statusCode == 200) {

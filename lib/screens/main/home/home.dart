@@ -1,5 +1,6 @@
 import "package:avec_moi_with_us/blocs/provider/movie_provider.dart";
 import "package:avec_moi_with_us/blocs/provider/random_provider.dart";
+import "package:avec_moi_with_us/blocs/provider/recommend_movie_provider.dart";
 import "package:avec_moi_with_us/blocs/provider/search_movie_provider.dart";
 import "package:avec_moi_with_us/models/movie/movie.dart";
 import "package:avec_moi_with_us/services/movie/movie.dart";
@@ -22,6 +23,7 @@ class _IndexPageState extends State<IndexPage> {
   bool searchState=false;
 
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -44,11 +46,13 @@ class _IndexPageState extends State<IndexPage> {
   Future<void> _refresh() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       context.read<MovieProvider>().emptyMovie();
+      context.read<RecommendMovieProvider>().emptyMovie();
       int randomSeed=0;
       if (context.read<RandomProvider>().randomState) {
         context.read<RandomProvider>().generateRandomSeed();
         randomSeed = context.read<RandomProvider>().randomSeed;
       }
+      context.read<RecommendMovieProvider>().insertMovie(await m.getRecommendMovie());
       context.read<MovieProvider>().insertMovie(await m.getMovie(1,randomSeed));
     });
   }
@@ -64,6 +68,7 @@ class _IndexPageState extends State<IndexPage> {
     final randomProvider = Provider.of<RandomProvider>(context);
     final movieProvider = Provider.of<MovieProvider>(context);
     final searchMovieProvider = Provider.of<SearchMovieProvider>(context);
+    final recommendMovieProvider = Provider.of<RecommendMovieProvider>(context);
     return Column(
       children: [
         const TitleBar(title: "Avec Moi With Us"),
@@ -156,10 +161,17 @@ class _IndexPageState extends State<IndexPage> {
                   return SizedBox(
                     height: 250,
                     child: ListView.builder(
+                      controller: _horizontalScrollController,
                       scrollDirection: Axis.horizontal,
-                      itemCount: 10,
+                      itemCount: recommendMovieProvider.movieList.length,
                       itemBuilder: (context, index) {
-                        return const ImageButton(movieId: "1",imageUrl: 'https://image.tmdb.org/t/p/original/7Wa0N9bmUznYQzzNAdTAN0OgQ1w.jpg',year: "2017",title: "咒術回戰",score: 1.2,);
+                        return ImageButton(
+                          movieId: recommendMovieProvider.movieList[index].movieId,
+                          imageUrl: recommendMovieProvider.movieList[index].resource,
+                          year: recommendMovieProvider.movieList[index].releaseYear,
+                          title: recommendMovieProvider.movieList[index].title,
+                          score: recommendMovieProvider.movieList[index].score
+                          ,);
                       },
                     ),
                   );

@@ -1,4 +1,7 @@
+import "package:avec_moi_with_us/models/user/information/information.dart";
 import "package:avec_moi_with_us/services/user/authentication.dart";
+import "package:avec_moi_with_us/services/user/information.dart";
+import "package:avec_moi_with_us/utils/exception.dart";
 import "package:avec_moi_with_us/utils/routes.dart";
 import "package:avec_moi_with_us/widgets/title.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
@@ -19,7 +22,30 @@ class _PersonalPageState extends State<PersonalPage> {
       toastInfo(context, "成功更新", "成功登出");
       Navigator.popAndPushNamed(context, Routes.login);
     }
+  }
+  InformationService i=InformationService();
+  String name="",gender="";
 
+  @override
+  void initState() {
+    super.initState();
+    getInformation();
+  }
+  Future<void> getInformation() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        ResponseInformation information = await i.getInformation();
+        setState(() {
+          name=information.name;
+          gender=information.gender;
+        });
+      } on AuthException{
+        toastError(context, "權限錯誤", "請重新登入");
+        Navigator.popAndPushNamed(context, Routes.login);
+      } catch (e){
+        toastError(context, "未知錯誤", "出現未知錯誤 請稍後再嘗試");
+      }
+    });
   }
 
   @override
@@ -36,8 +62,11 @@ class _PersonalPageState extends State<PersonalPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.face,size: 90,color: Colors.black,),
-                Text("個人資訊",style: Theme.of(context).textTheme.displayMedium,)
+                gender=="male"?
+                Icon(Icons.face,size: 90,color: Colors.blueAccent,):
+                gender=="female"?
+                Icon(Icons.face_3,size: 90,color: Colors.pink,):Icon(Icons.person_outline_rounded,size: 90,color: Colors.black,),
+                Text(name,style: Theme.of(context).textTheme.displayMedium,)
               ],
             ),
           ),
