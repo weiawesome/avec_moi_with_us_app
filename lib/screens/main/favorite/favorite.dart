@@ -1,4 +1,5 @@
 import "package:avec_moi_with_us/blocs/provider/favorite_movie_provider.dart";
+import "package:avec_moi_with_us/blocs/provider/favorite_movie_scroller_provider.dart";
 import "package:avec_moi_with_us/models/movie/movie.dart";
 import "package:avec_moi_with_us/services/movie/movie.dart";
 import "package:avec_moi_with_us/widgets/image_button.dart";
@@ -6,7 +7,6 @@ import "package:avec_moi_with_us/widgets/title.dart";
 import "package:flutter/material.dart";
 import "package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart";
 import "package:provider/provider.dart";
-import "package:stroke_text/stroke_text.dart";
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
@@ -17,15 +17,23 @@ class FavoritePage extends StatefulWidget {
 class _FavoritePageState extends State<FavoritePage> {
   MovieService m=MovieService();
 
-  final _scrollController = ScrollController();
+  late ScrollController _scrollController;
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
+    _scrollController= context.read<FavoriteMovieScrollProvider>().scrollController;
     _refresh();
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.9) {
-        int page=context.read<FavoriteMovieProvider>().currentPage+1;
-        context.read<FavoriteMovieProvider>().insertMovie(await m.getLikeMovie(page));
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.8) {
+        if (context.read<FavoriteMovieProvider>().currentPage==context.read<FavoriteMovieProvider>().queryPage){
+          context.read<FavoriteMovieProvider>().queryPage+=1;
+          int page=context.read<FavoriteMovieProvider>().queryPage;
+          context.read<FavoriteMovieProvider>().insertMovie(await m.getRecentlyHotMovie(page));
+        }
       }
     });
   }
@@ -54,7 +62,7 @@ class _FavoritePageState extends State<FavoritePage> {
           child: LiquidPullToRefresh(
             animSpeedFactor:1.5,
             color: Theme.of(context).canvasColor,
-            backgroundColor: Color(0xFFFFE27C),
+            backgroundColor: const Color(0xFFFFE27C),
             onRefresh: _refresh,
             showChildOpacityTransition: true,
             child: ListView.builder(
@@ -70,9 +78,9 @@ class _FavoritePageState extends State<FavoritePage> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
+                    DualImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
                     secondMovie.movieId.isEmpty?
-                    Container(width: 150,height: 200,margin:const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),): ImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
+                    Flexible(flex: 1,child: Container(),): DualImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
                   ],
                 );
               },

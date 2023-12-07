@@ -1,6 +1,7 @@
 import "package:avec_moi_with_us/models/movie/movie_specific.dart";
 import "package:avec_moi_with_us/services/movie/movie.dart";
 import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/widgets/celebrity.dart";
 import "package:avec_moi_with_us/widgets/title.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
 import "package:flutter/material.dart";
@@ -74,7 +75,7 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TitleBarSubPage(title: "Specific Movie"),
+                const TitleBarSubPage(title: "Specific Movie"),
                 loading?
                 Flexible(
                   flex:16,
@@ -91,8 +92,8 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          height: 200,
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,20 +127,15 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                   );
                                 },
                               ),
-                              Expanded(
+                              SizedBox(
+                                height: 200,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Flexible(
-                                      child: Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
-                                    ),
-                                    Flexible(
-                                      child: Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
-                                    ),
-                                    Flexible(
-                                      child: Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge, overflow: TextOverflow.ellipsis,),
-                                    ),
+                                    Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge,),
+                                    Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge,),
+                                    Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge,),
                                   ],
                                 ),
                               ),
@@ -187,10 +183,10 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                   return Container(
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(20.0),
-                                          color: Color(0xFFFFE27C)
+                                          color: const Color(0xFFFFE27C)
                                       ),
-                                      margin: EdgeInsets.only(right: 15.0),
-                                      padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                      margin: const EdgeInsets.only(right: 15.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
                                       child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
                                   );
                                 }).toList(),
@@ -215,8 +211,8 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                                           borderRadius: BorderRadius.circular(20.0),
                                           color: const Color(0xFFFFE27C)
                                       ),
-                                      margin: EdgeInsets.only(right: 15.0),
-                                      padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                      margin: const EdgeInsets.only(right: 15.0),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
                                       child: Text("${e.organization} : ${e.score} 分",style: Theme.of(context).textTheme.bodyMedium),
                                   );
                                 }).toList(),
@@ -247,44 +243,7 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.directors.map((e){
-                                  return Container(
-                                      margin: EdgeInsets.only(right: 15.0),
-                                      padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                      child: Column(
-                                        children: [
-                                          Image.network(
-                                            e.resource,
-                                            width: 100,
-                                            height: 150,
-                                            fit: BoxFit.contain,
-                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              } else {
-                                                return const SizedBox(
-                                                  width: 100,
-                                                  height: 150,
-                                                  child: Center(
-                                                    widthFactor: 1,
-                                                    heightFactor: 1,
-                                                    child: CircularProgressIndicator(
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                              return const SizedBox(
-                                                  width: 100,
-                                                  height: 150,
-                                                  child: Icon(Icons.error,size: 50,)
-                                              );
-                                            },
-                                          ),
-                                          Text(e.name,style: Theme.of(context).textTheme.bodyMedium),
-                                        ],
-                                      ),
-                                  );
+                                  return CelebrityWidget(imageUrl: e.resource, name: e.name);
                                 }).toList(),
                               ),
                             )
@@ -302,44 +261,7 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.actors.map((e){
-                                  return Container(
-                                    margin: EdgeInsets.only(right: 15.0),
-                                    padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                    child: Column(
-                                      children: [
-                                        Image.network(
-                                          e.resource,
-                                          width: 100,
-                                          height: 150,
-                                          fit: BoxFit.contain,
-                                          loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                            if (loadingProgress == null) {
-                                              return child;
-                                            } else {
-                                              return const SizedBox(
-                                                width: 100,
-                                                height: 150,
-                                                child: Center(
-                                                  widthFactor: 1,
-                                                  heightFactor: 1,
-                                                  child: CircularProgressIndicator(
-                                                  ),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                            return const SizedBox(
-                                                width: 100,
-                                                height: 150,
-                                                child: Icon(Icons.error,size: 50,)
-                                            );
-                                          },
-                                        ),
-                                        Text(e.name,style: Theme.of(context).textTheme.bodyMedium),
-                                      ],
-                                    ),
-                                  );
+                                  return CelebrityWidget(imageUrl: e.resource, name: e.name);
                                 }).toList(),
                               ),
                             )

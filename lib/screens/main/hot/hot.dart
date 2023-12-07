@@ -1,4 +1,5 @@
 import "package:avec_moi_with_us/blocs/provider/hot_movie_provider.dart";
+import "package:avec_moi_with_us/blocs/provider/hot_movie_scroller_provider.dart";
 import "package:avec_moi_with_us/services/movie/movie.dart";
 import "package:avec_moi_with_us/widgets/image_button.dart";
 import "package:avec_moi_with_us/widgets/title.dart";
@@ -16,15 +17,23 @@ class HotPage extends StatefulWidget {
 class _HotPageState extends State<HotPage> {
   MovieService m=MovieService();
 
-  final _scrollController = ScrollController();
+  late ScrollController _scrollController;
+  @override
+  void dispose() {
+    super.dispose();
+  }
   @override
   void initState() {
     super.initState();
+    _scrollController= context.read<HotMovieScrollProvider>().scrollController;
     _refresh();
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.9) {
-        int page=context.read<HotMovieProvider>().currentPage+1;
-        context.read<HotMovieProvider>().insertMovie(await m.getRecentlyHotMovie(page));
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.8) {
+        if (context.read<HotMovieProvider>().currentPage==context.read<HotMovieProvider>().queryPage){
+          context.read<HotMovieProvider>().queryPage+=1;
+          int page=context.read<HotMovieProvider>().queryPage;
+          context.read<HotMovieProvider>().insertMovie(await m.getRecentlyHotMovie(page));
+        }
       }
     });
   }

@@ -48,6 +48,10 @@ class MovieService {
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
+    else if (response.statusCode == 422){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
     else if (response.statusCode == 500){
       throw ServerException("System error.");
     }
@@ -95,6 +99,10 @@ class MovieService {
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
+    else if (response.statusCode == 422){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
     else if (response.statusCode == 500){
       throw ServerException("System error.");
     }
@@ -116,6 +124,10 @@ class MovieService {
       throw ClientException("Invalid status value. RequestBody is not match request.");
     }
     else if (response.statusCode == 401){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
+    else if (response.statusCode == 422){
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
@@ -144,6 +156,10 @@ class MovieService {
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
+    else if (response.statusCode == 422){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
     else if (response.statusCode == 500){
       throw ServerException("System error.");
     }
@@ -169,6 +185,10 @@ class MovieService {
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
+    else if (response.statusCode == 422){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
     else if (response.statusCode == 500){
       throw ServerException("System error.");
     }
@@ -191,6 +211,10 @@ class MovieService {
       throw ExistException("Movie not exist.");
     }
     else if (response.statusCode == 401){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
+    else if (response.statusCode == 422){
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
@@ -239,6 +263,10 @@ class MovieService {
     }
     else if(response.statusCode == 404){
       throw ExistException("Movie not exist.");
+    }
+    else if (response.statusCode == 422){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
     }
     else if (response.statusCode == 500){
       throw ServerException("System error.");

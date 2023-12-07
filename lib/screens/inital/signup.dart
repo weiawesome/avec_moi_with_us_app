@@ -100,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 3,
                     child: Center(
                       child: Text(
@@ -111,238 +111,241 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                   loading?
-                  Expanded(flex:12,child: Loading()):Expanded(
+                  const Expanded(flex:12,child: Loading()):Expanded(
                       flex: 10,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            flex:1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                              child: Form(
-                                key: _nameKey,
-                                child: TextFormField(
-                                    focusNode: _nameFocus,
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                    controller: _nameController,
-                                    keyboardType: TextInputType.name,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      labelText: "Name",
-                                      labelStyle: Theme.of(context).textTheme.labelMedium,
-                                      hintText: "Enter your name",
-                                      prefixIcon: const Icon(Icons.person),
-                                      border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              height: 90,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+                                child: Form(
+                                  key: _nameKey,
+                                  child: TextFormField(
+                                      focusNode: _nameFocus,
+                                      style: Theme.of(context).textTheme.labelMedium,
+                                      controller: _nameController,
+                                      keyboardType: TextInputType.name,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        labelText: "Name",
+                                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                                        hintText: "Enter your name",
+                                        prefixIcon: const Icon(Icons.person),
+                                        border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                        ),
+                                        filled: true,
+                                        fillColor: const Color(0xFFFFE27C),
+                                        hintStyle: Theme.of(context).textTheme.labelMedium,
                                       ),
-                                      filled: true,
-                                      fillColor: const Color(0xFFFFE27C),
-                                      hintStyle: Theme.of(context).textTheme.labelMedium,
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your name";
-                                      } else if (value.contains(" ")) {
-                                        return "Name can't contain space";
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your name";
+                                        } else if (value.contains(" ")) {
+                                          return "Name can't contain space";
+                                        }
+                                        return null;
+                                      },
+                                      onEditingComplete: () {
+                                        if (_nameKey.currentState!.validate()==true) {
+                                          FocusScope.of(context).requestFocus(_emailFocus);
+                                        }
                                       }
-                                      return null;
-                                    },
-                                    onEditingComplete: () {
-                                      if (_nameKey.currentState!.validate()==true) {
-                                        FocusScope.of(context).requestFocus(_emailFocus);
-                                      }
-                                    }
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Flexible(
-                            flex:1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                              child: Form(
-                                key: _mailKey,
-                                child: TextFormField(
-                                    focusNode: _emailFocus,
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                    controller: _emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                      labelText: "Email",
-                                      labelStyle: Theme.of(context).textTheme.labelMedium,
-                                      hintText: "Enter your email",
-                                      prefixIcon: const Icon(Icons.email),
-                                      border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                            SizedBox(
+                              height: 90,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+                                child: Form(
+                                  key: _mailKey,
+                                  child: TextFormField(
+                                      focusNode: _emailFocus,
+                                      style: Theme.of(context).textTheme.labelMedium,
+                                      controller: _emailController,
+                                      keyboardType: TextInputType.emailAddress,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        labelText: "Email",
+                                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                                        hintText: "Enter your email",
+                                        prefixIcon: const Icon(Icons.email),
+                                        border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                        ),
+                                        filled: true,
+                                        fillColor: const Color(0xFFFFE27C),
+                                        hintStyle: Theme.of(context).textTheme.labelMedium,
                                       ),
-                                      filled: true,
-                                      fillColor: const Color(0xFFFFE27C),
-                                      hintStyle: Theme.of(context).textTheme.labelMedium,
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your email";
-                                      } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-                                        return "Invalid email address";
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your email";
+                                        } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                                          return "Invalid email address";
+                                        }
+                                        return null;
+                                      },
+                                      onEditingComplete: () {
+                                        if (_mailKey.currentState!.validate()==true) {
+                                          FocusScope.of(context).requestFocus(_passwordFocus);
+                                        }
                                       }
-                                      return null;
-                                    },
-                                    onEditingComplete: () {
-                                      if (_mailKey.currentState!.validate()==true) {
-                                        FocusScope.of(context).requestFocus(_passwordFocus);
-                                      }
-                                    }
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Flexible(
-                            flex:1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                              child: Form(
-                                key: _passwordKey,
-                                child: TextFormField(
-                                  focusNode: _passwordFocus,
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                  controller: _passwordController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  obscureText: true,
-                                  textInputAction: TextInputAction.done,
-                                  onEditingComplete: () {
-                                    if (_passwordKey.currentState!.validate()==true) {
-                                      FocusScope.of(context).requestFocus(_confirmPasswordFocus);
-                                    }
-                                  },
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter your password";
-                                    } else if (value.length < 8) {
-                                      return "Password too short";
-                                    } else if (value.length > 30){
-                                      return "Password too long";
-                                    }else if (value.contains(" ")) {
-                                      return "Password cannot contain spaces";
-                                    } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
-                                      return "Password can't contain illegal characters";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: "Password",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
-                                    hintText: "Enter your password",
-                                    prefixIcon: const Icon(Icons.lock),
-                                    filled: true,
-                                    fillColor: const Color(0xFFFFE27C),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20))
+                            SizedBox(
+                              height: 90,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+                                child: Form(
+                                  key: _passwordKey,
+                                  child: TextFormField(
+                                    focusNode: _passwordFocus,
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                    controller: _passwordController,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    obscureText: true,
+                                    textInputAction: TextInputAction.done,
+                                    onEditingComplete: () {
+                                      if (_passwordKey.currentState!.validate()==true) {
+                                        FocusScope.of(context).requestFocus(_confirmPasswordFocus);
+                                      }
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter your password";
+                                      } else if (value.length < 8) {
+                                        return "Password too short";
+                                      } else if (value.length > 30){
+                                        return "Password too long";
+                                      }else if (value.contains(" ")) {
+                                        return "Password cannot contain spaces";
+                                      } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
+                                        return "Password can't contain illegal characters";
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "Password",
+                                      labelStyle: Theme.of(context).textTheme.labelMedium,
+                                      hintText: "Enter your password",
+                                      prefixIcon: const Icon(Icons.lock),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFFE27C),
+                                      border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Flexible(
-                            flex:1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                              child: Form(
-                                key: _confirmPasswordKey,
-                                child: TextFormField(
-                                  focusNode: _confirmPasswordFocus,
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                  controller: _confirmPasswordController,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  obscureText: true,
-                                  textInputAction: TextInputAction.done,
-                                  onEditingComplete: () {
-                                    signup();
-                                  },
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter your password";
-                                    } else if (value.length < 8) {
-                                      return "Password too short";
-                                    } else if (value.length > 30){
-                                      return "Password too long";
-                                    }else if (value.contains(" ")) {
-                                      return "Password cannot contain spaces";
-                                    } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
-                                      return "Password can't contain illegal characters";
-                                    } else if (value!=_passwordController.text){
-                                      print(value);
-                                      print(_passwordController.text);
-                                      return "Password not match";
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                    labelText: "Confirm Password",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
-                                    hintText: "Enter your password again",
-                                    prefixIcon: const Icon(Icons.lock),
-                                    filled: true,
-                                    fillColor: const Color(0xFFFFE27C),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20))
+                            SizedBox(
+                              height: 90,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
+                                child: Form(
+                                  key: _confirmPasswordKey,
+                                  child: TextFormField(
+                                    focusNode: _confirmPasswordFocus,
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                    controller: _confirmPasswordController,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    obscureText: true,
+                                    textInputAction: TextInputAction.done,
+                                    onEditingComplete: () {
+                                      signup();
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter your password";
+                                      } else if (value.length < 8) {
+                                        return "Password too short";
+                                      } else if (value.length > 30){
+                                        return "Password too long";
+                                      }else if (value.contains(" ")) {
+                                        return "Password cannot contain spaces";
+                                      } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
+                                        return "Password can't contain illegal characters";
+                                      } else if (value!=_passwordController.text){
+                                        print(value);
+                                        print(_passwordController.text);
+                                        return "Password not match";
+                                      }
+                                      return null;
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "Confirm Password",
+                                      labelStyle: Theme.of(context).textTheme.labelMedium,
+                                      hintText: "Enter your password again",
+                                      prefixIcon: const Icon(Icons.lock),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFFE27C),
+                                      border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Flexible(
-                            flex: 1,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                              child: Container(
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Colors.white,),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                        flex: 1,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Icon(Icons.wc,size: 30,),
-                                            Text("Gender", style: Theme.of(context).textTheme.labelMedium,)
-                                          ],
-                                        )
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: ListView(
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        children: [
-                                          CupertinoSlidingSegmentedControl(
-                                              backgroundColor: Colors.white,
-                                              thumbColor: Color(0xFFFFE27C),
-                                              groupValue: groupValue,
-                                              children:{
-                                                0: formatGenderUI(0),
-                                                1: formatGenderUI(1),
-                                                2: formatGenderUI(2)
-                                              },
-                                              onValueChanged: (value){
-                                                setState(() {
-                                                  groupValue=value!;
-                                                });
-                                              }
+                            SizedBox(
+                              height: 100,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25, right: 25),
+                                child: Container(
+                                  padding: const EdgeInsets.only(left: 5, right: 5),
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Colors.white,),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          flex: 1,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              const Icon(Icons.wc,size: 30,),
+                                              Text("Gender", style: Theme.of(context).textTheme.labelMedium,)
+                                            ],
                                           )
-                                        ],
                                       ),
-                                    ),
-                                  ],
+                                      Expanded(
+                                        flex: 1,
+                                        child: ListView(
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          children: [
+                                            CupertinoSlidingSegmentedControl(
+                                                backgroundColor: Colors.white,
+                                                thumbColor: const Color(0xFFFFE27C),
+                                                groupValue: groupValue,
+                                                children:{
+                                                  0: formatGenderUI(0),
+                                                  1: formatGenderUI(1),
+                                                  2: formatGenderUI(2)
+                                                },
+                                                onValueChanged: (value){
+                                                  setState(() {
+                                                    groupValue=value!;
+                                                  });
+                                                }
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       )
                   ),
                   loading?Container():Expanded(

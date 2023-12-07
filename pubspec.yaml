@@ -27,9 +27,15 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: "^0.13.1"
+  flutter_native_splash: ^2.3.6
+
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/icons/icon.png
+    - assets/icons/icon_rounded.png
   fonts:
     - family: McLaren
       fonts:
@@ -37,3 +43,38 @@ flutter:
     - family: Kavoon
       fonts:
         - asset: assets/fonts/Kavoon/Kavoon-Regular.ttf
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icons/icon.png"
+  icon_size: 256
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/icons/icon.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/icons/icon.png"
+    icon_size: 256
+  macos:
+    generate: true
+    image_path: "assets/icons/icon.png"
+
+flutter_native_splash:
+  color: "#9680B4"
+  image: assets/icons/icon_rounded.png
+  branding: assets/icons/icon_rounded.png
+  color_dark: "#9680B4"
+  image_dark: assets/icons/icon_rounded.png
+  branding_dark: assets/icons/icon_rounded.png
+
+  android_12:
+    image: assets/icons/icon_rounded.png
+    icon_background_color: "#9680B4"
+    image_dark: assets/icons/icon_rounded.png
+    icon_background_color_dark: "#9680B4"
+
+  web: false

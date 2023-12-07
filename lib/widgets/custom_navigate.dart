@@ -1,3 +1,6 @@
+import 'package:avec_moi_with_us/blocs/provider/favorite_movie_scroller_provider.dart';
+import 'package:avec_moi_with_us/blocs/provider/hot_movie_scroller_provider.dart';
+import 'package:avec_moi_with_us/blocs/provider/movie_scroller_provider.dart';
 import 'package:avec_moi_with_us/blocs/utils/bloc_navigator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,6 +46,13 @@ class _CustomNavigate extends State<CustomNavigate> {
       unselectedItemColor: const Color.fromRGBO(118,118,118,0.6),
       onTap: (index) {
         context.read<PageBloc>().add(pageEvents[index]);
+        if (index==0){
+          context.read<MovieScrollProvider>().scrollToTop();
+        } else if (index==1){
+          context.read<HotMovieScrollProvider>().scrollToTop();
+        } else if (index==2){
+          context.read<FavoriteMovieScrollProvider>().scrollToTop();
+        }
       },
       currentIndex: pageIndex[context.watch<PageBloc>().state]??0,
       elevation: 0,

@@ -47,7 +47,6 @@ class InformationService {
     if(jwt==null){
       throw AuthException("JWT invalid");
     }
-    print("HAHAH");
     final response = await httpClient.put(
       Uri.parse(ApiRoutes.editInformationUrl),
       headers: {
@@ -57,7 +56,6 @@ class InformationService {
       },
       body: jsonEncode(data.formatJson()),
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       return;
     }

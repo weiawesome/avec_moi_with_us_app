@@ -1,6 +1,9 @@
+import 'package:avec_moi_with_us/blocs/provider/favorite_movie_scroller_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/history_movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/hot_movie_provider.dart';
+import 'package:avec_moi_with_us/blocs/provider/hot_movie_scroller_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/movie_provider.dart';
+import 'package:avec_moi_with_us/blocs/provider/movie_scroller_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/random_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/recommend_movie_provider.dart';
 import 'package:avec_moi_with_us/blocs/provider/theme_provider.dart';
@@ -24,6 +27,15 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (_) => RandomProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => MovieScrollProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => HotMovieScrollProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => FavoriteMovieScrollProvider(),
           ),
           ChangeNotifierProvider(
             create: (_) => MovieProvider(),

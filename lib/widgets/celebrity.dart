@@ -9,9 +9,13 @@ class CelebrityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 150,
+      height: 200,
       margin: const EdgeInsets.only(right: 15.0),
       padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.network(
             imageUrl,

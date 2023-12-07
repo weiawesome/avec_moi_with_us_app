@@ -1,4 +1,5 @@
 import 'package:avec_moi_with_us/utils/routes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 
@@ -23,25 +24,23 @@ class ImageButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Image.network(
-              imageUrl,
+            CachedNetworkImage(
+              imageUrl: imageUrl,
               width: 150,
               height: 200,
-              fit: BoxFit.fill,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                } else {
-                  return const Center(
-                    widthFactor: 1,
-                    heightFactor: 1,
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                return const Icon(Icons.error);
-              },
+              fit: BoxFit.fitWidth,
+              placeholder: (context, url) => const SizedBox(
+                width: 150,
+                height: 200,
+                child: Center(
+                  widthFactor: 1,heightFactor: 1,
+                    child: CircularProgressIndicator(color: Color(0xFFFD6868),)),
+              ),
+              errorWidget: (context, url, error) => const SizedBox(
+                width: 150,
+                height: 200,
+                child: Icon(Icons.error),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -60,6 +59,70 @@ class ImageButton extends StatelessWidget {
               ],
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class DualImageButton extends StatelessWidget {
+  final String movieId;
+  final String imageUrl;
+  final String year;
+  final String title;
+  final double score;
+
+  const DualImageButton({Key?key,required this.movieId,required this.imageUrl,required this.year,required this.title,required this.score}):super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      flex:1,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, Routes.specific_movie, arguments: movieId);
+        },
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.fitWidth,
+                placeholder: (context, url) => const SizedBox(
+                  width: 150,
+                  height: 200,
+                  child: Center(
+                    widthFactor: 1,
+                      heightFactor: 1,
+                      child: CircularProgressIndicator(color: Color(0xFFFD6868),
+                      )),
+                ),
+                errorWidget: (context, url, error) => const SizedBox(
+                  width: 150,
+                  height: 200,
+                  child: Icon(Icons.error),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(child: Text(year, style: Theme.of(context).textTheme.bodySmall,overflow: TextOverflow.ellipsis,)),
+                  // Wrap the title Text with Flexible
+                  Flexible(
+                    flex:2,
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Flexible(child: Text("$score 分", style: Theme.of(context).textTheme.bodySmall,overflow: TextOverflow.ellipsis,)),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -87,29 +150,24 @@ class SingleImageButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Image.network(
-              imageUrl,
+            CachedNetworkImage(
+              imageUrl: imageUrl,
               width: 150,
               height: 200,
-              fit: BoxFit.fill,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                } else {
-                  return const SizedBox(
-                    width: 150,
-                    height: 200,
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              },
-              errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                return SizedBox(
-                  width: 150,
-                  height: 200,
-                  child: const Icon(Icons.error),
-                );
-              },
+              fit: BoxFit.fitWidth,
+              placeholder: (context, url) => const SizedBox(
+                width: 150,
+                height: 200,
+                child: Center(
+                  widthFactor: 1,
+                    heightFactor: 1,
+                    child: CircularProgressIndicator(color: Color(0xFFFD6868),)),
+              ),
+              errorWidget: (context, url, error) => const SizedBox(
+                width: 150,
+                height: 200,
+                child: Icon(Icons.error),
+              ),
             ),
             // Wrap the Column with Flexible or Expanded
             Flexible(

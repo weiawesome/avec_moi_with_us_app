@@ -17,13 +17,21 @@ class _HistoryPageState extends State<HistoryPage> {
 
   final _scrollController = ScrollController();
   @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+  @override
   void initState() {
     super.initState();
     _refresh();
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.9) {
-        int page=context.read<HistoryMovieProvider>().currentPage+1;
-        context.read<HistoryMovieProvider>().insertMovie(await m.getRecentlyViewMovie(page));
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent*0.8) {
+        if (context.read<HistoryMovieProvider>().currentPage==context.read<HistoryMovieProvider>().queryPage){
+          context.read<HistoryMovieProvider>().queryPage+=1;
+          int page=context.read<HistoryMovieProvider>().queryPage;
+          context.read<HistoryMovieProvider>().insertMovie(await m.getRecentlyHotMovie(page));
+        }
       }
     });
   }

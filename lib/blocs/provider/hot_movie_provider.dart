@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class HotMovieProvider extends ChangeNotifier {
   late int totalPages;
   late int currentPage;
+  late int queryPage;
   late List<Movie> movieList;
 
   HotMovieProvider() {
     totalPages=0;
     currentPage=0;
+    queryPage=0;
     movieList=[];
     notifyListeners();
   }
@@ -20,11 +22,14 @@ class HotMovieProvider extends ChangeNotifier {
   int getTotalPage(){
     return totalPages;
   }
+  int getQueryPage(){
+    return queryPage;
+  }
   List<Movie> getMovieList(){
     return movieList;
   }
   void insertMovie(ResponseMovie data){
-    if (data.movieList.isNotEmpty && data.currentPage>currentPage) {
+    if (data.movieList.isNotEmpty && data.currentPage==queryPage) {
       movieList.addAll(data.movieList);
       totalPages=data.totalPages;
       currentPage=data.currentPage;
@@ -34,6 +39,7 @@ class HotMovieProvider extends ChangeNotifier {
   void emptyMovie(){
     totalPages=0;
     currentPage=0;
+    queryPage=1;
     movieList=[];
     notifyListeners();
   }

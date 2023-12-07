@@ -26,7 +26,7 @@ class AuthenticationService {
     if (response.statusCode == 200) {
       Map<String,dynamic> result=jsonDecode(response.body);
       ResponseLogin r=ResponseLogin.fromJson(result);
-      jwtService.saveJwt(r.token);
+      await jwtService.saveJwt(r.token);
       return r;
     }
     else if(response.statusCode == 400){
@@ -52,12 +52,17 @@ class AuthenticationService {
       headers: {'Authorization': 'Bearer $jwt'},
     );
     if (response.statusCode == 204) {
+      await jwtService.deleteJwt();
       return ;
     }
     else if(response.statusCode == 400){
       throw ClientException("Invalid status value. RequestBody is not match request.");
     }
     else if (response.statusCode == 401){
+      await jwtService.deleteJwt();
+      throw AuthException("Invalid Jwt token.");
+    }
+    else if (response.statusCode == 422){
       await jwtService.deleteJwt();
       throw AuthException("Invalid Jwt token.");
     }
@@ -68,7 +73,6 @@ class AuthenticationService {
       throw Exception('Failed in unknown reason');
     }
   }
-
   Future<void> signup(RequestSignup data) async {
     final response = await httpClient.post(
       Uri.parse(ApiRoutes.signupUrl),

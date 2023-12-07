@@ -1,4 +1,4 @@
-import 'package:avec_moi_with_us/screens/home.dart';
+import 'package:avec_moi_with_us/screens/inital/login.dart';
 import 'package:avec_moi_with_us/screens/inital/signup.dart';
 import 'package:avec_moi_with_us/screens/main/main_home.dart';
 import 'package:avec_moi_with_us/screens/main/movie/specific.dart';
@@ -29,7 +29,7 @@ class RouteGenerator {
       case Routes.index:
         return MaterialPageRoute(builder: (_) => const MainHomePage());
       case Routes.login:
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const LoginPage());
       case Routes.signup:
         return MaterialPageRoute(builder: (_) => const SignUpPage());
       case Routes.search:

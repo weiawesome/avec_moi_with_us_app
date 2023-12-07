@@ -1,5 +1,5 @@
 class ApiRoutes{
-  static const String apiBaseUrl="http://127.0.0.1:8080/api/v1/";
+  static const String apiBaseUrl="https://tcweeei.study-savvy.com/api/v1/";
 
   static const String userInformationUrl="${apiBaseUrl}user";
   static const String signupUrl="${apiBaseUrl}user/signup";
