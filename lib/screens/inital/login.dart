@@ -1,4 +1,3 @@
-import "package:avec_moi_with_us/firebase_options.dart";
 import "package:avec_moi_with_us/models/user/authentication/auth.dart";
 import "package:avec_moi_with_us/models/user/authentication/login.dart";
 import "package:avec_moi_with_us/services/user/authentication.dart";

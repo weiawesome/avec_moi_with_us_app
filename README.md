@@ -1,16 +1,29 @@
-# avec_moi_with_us
+# Avec Moi With Us
+An application for recommend movies/tvs.
 
-A new Flutter project.
 
-## Getting Started
+## Product's Primary Features
+* Authentication via Third-Party (Google, GitHub)
+* Recommend movies/tvs for user
+* Movies/Tvs list by rank
+* List random movies/tvs
+* Search movies/tvs
+* Gain specific movie/tv information
+* Collect movies/tvs user like
+* Record movies/tvs has watched
+* ...
 
-This project is a starting point for a Flutter application.
+## User Interface
+### Authentication (Login, Signup)
+![](./assets/ui-display/authentication.png)
 
-A few resources to get you started if this is your first Flutter project:
+### Primary Feature (Home, Recently Hot, Favorite, Information)
+![](./assets/ui-display/primary_feature.png)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Setting (Edit Contact, Edit Password, Edit Preference, View History)
+![](./assets/ui-display/setting.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Movies / Tvs (Search, Specific)
+![](./assets/ui-display/movie_tv.png)
+## Design Pattern
+### MVC ( Model - View - Controller )
