@@ -28,7 +28,7 @@ class LightStyle {
       bodySmall: TextStyle(fontFamily: "McLaren",fontSize: 15,color: Colors.black,fontWeight: FontWeight.w500,),
       displayMedium: TextStyle(fontFamily: "McLaren",fontSize: 35,color: Colors.black,fontWeight: FontWeight.w500,),
       displaySmall: TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors.black,fontWeight: FontWeight.w500,),
-      // headlineLarge:TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors,fontWeight: FontWeight.w400,),
+      headlineLarge:TextStyle(fontFamily: "McLaren",fontSize: 45,color: Colors.black,fontWeight: FontWeight.w500,),
       headlineMedium:TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors.grey,fontWeight: FontWeight.w400,),
       headlineSmall:TextStyle(fontFamily: "McLaren",fontSize: 30,color: Colors.white,fontWeight: FontWeight.w400,),
 

@@ -11,17 +11,17 @@ import 'package:flutter/material.dart';
 class Routes {
   static const login="/login";
   static const signup="/signup";
-  static const add_preference="/add_preference";
+  static const addPreference="/add_preference";
   static const index="/";
   static const search="/search";
   static const trending="/trending";
   static const information="/information";
-  static const edit_password="/edit_password";
-  static const edit_information="/edit_information";
-  static const edit_preference="/edit_preference";
+  static const editPassword="/edit_password";
+  static const editInformation="/edit_information";
+  static const editPreference="/edit_preference";
   static const history="/history";
   static const favorite="/favorite";
-  static const specific_movie="/specific_movie?movie_id";
+  static const specificMovie="/specific_movie?movie_id";
 }
 class RouteGenerator {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -34,15 +34,15 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignUpPage());
       case Routes.search:
         return MaterialPageRoute(builder: (_) => const MainHomePage());
-      case Routes.edit_password:
+      case Routes.editPassword:
         return MaterialPageRoute(builder: (_) => const EditPasswordPage());
-      case Routes.edit_information:
+      case Routes.editInformation:
         return MaterialPageRoute(builder: (_) => const EditInformationPage());
-      case Routes.edit_preference:
+      case Routes.editPreference:
         return MaterialPageRoute(builder: (_) => const EditPreferencePage());
       case Routes.history:
         return MaterialPageRoute(builder: (_) => const HistoryPage());
-      case Routes.specific_movie:
+      case Routes.specificMovie:
         return MaterialPageRoute(
           builder: (_) => SpecificMoviePage(movieId: settings.arguments as String),
         );

@@ -32,17 +32,41 @@ class _SignUpPageState extends State<SignUpPage> {
   final FocusNode _passwordFocus = FocusNode();
   final FocusNode _confirmPasswordFocus = FocusNode();
   bool loading=false;
-
-  Future<void> signup() async {
+  void checkState(){
     if (_nameKey.currentState!.validate()==false) {
+      _mailKey.currentState!.validate();
+      _passwordKey.currentState!.validate();
+      _confirmPasswordKey.currentState!.validate();
       FocusScope.of(context).requestFocus(_nameFocus);
     }else if (_mailKey.currentState!.validate()==false) {
+      _passwordKey.currentState!.validate();
+      _confirmPasswordKey.currentState!.validate();
       FocusScope.of(context).requestFocus(_emailFocus);
     } else if (_passwordKey.currentState!.validate()==false){
+      _confirmPasswordKey.currentState!.validate();
       FocusScope.of(context).requestFocus(_passwordFocus);
     } else if (_confirmPasswordKey.currentState!.validate()==false){
       FocusScope.of(context).requestFocus(_confirmPasswordFocus);
-    } else{
+    } else {
+      FocusScope.of(context).unfocus();
+    }
+  }
+  Future<void> signup() async {
+    if (_nameKey.currentState!.validate()==false) {
+      _mailKey.currentState!.validate();
+      _passwordKey.currentState!.validate();
+      _confirmPasswordKey.currentState!.validate();
+      FocusScope.of(context).requestFocus(_nameFocus);
+    }else if (_mailKey.currentState!.validate()==false) {
+      _passwordKey.currentState!.validate();
+      _confirmPasswordKey.currentState!.validate();
+      FocusScope.of(context).requestFocus(_emailFocus);
+    } else if (_passwordKey.currentState!.validate()==false){
+      _confirmPasswordKey.currentState!.validate();
+      FocusScope.of(context).requestFocus(_passwordFocus);
+    } else if (_confirmPasswordKey.currentState!.validate()==false){
+      FocusScope.of(context).requestFocus(_confirmPasswordFocus);
+    } else {
       FocusScope.of(context).unfocus();
       AuthenticationService s=AuthenticationService();
       setState(() {
@@ -159,19 +183,22 @@ class _SignUpPageState extends State<SignUpPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(
-                    flex: 3,
-                    child: Center(
-                      child: Text(
-                        "CREATE YOUR\nACCOUNT",
-                        style: TextStyle(fontFamily: "Kavoon",color: Color(0xFF55E9D7), fontSize: 40, fontWeight: FontWeight.w400, height: 0,),
-                        textAlign: TextAlign.center,
+                  Expanded(
+                    flex: 2,
+                    child: Semantics(
+                      label: "歡迎使用者註冊的標題",
+                      child: const Center(
+                        child: Text(
+                          "CREATE YOUR\nACCOUNT",
+                          style: TextStyle(fontFamily: "Kavoon",color: Color(0xFF55E9D7), fontSize: 35, fontWeight: FontWeight.w400, height: 0,),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),
                   loading?
                   const Expanded(flex:12,child: Loading()):Expanded(
-                      flex: 10,
+                      flex: 8,
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -180,39 +207,42 @@ class _SignUpPageState extends State<SignUpPage> {
                               height: 90,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                                child: Form(
-                                  key: _nameKey,
-                                  child: TextFormField(
-                                      focusNode: _nameFocus,
-                                      style: Theme.of(context).textTheme.labelMedium,
-                                      controller: _nameController,
-                                      keyboardType: TextInputType.name,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        labelText: "Name",
-                                        labelStyle: Theme.of(context).textTheme.labelMedium,
-                                        hintText: "Enter your name",
-                                        prefixIcon: const Icon(Icons.person),
-                                        border: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                child: Semantics(
+                                  label: "輸入使用者名稱的輸入框",
+                                  child: Form(
+                                    key: _nameKey,
+                                    child: TextFormField(
+                                        focusNode: _nameFocus,
+                                        style: Theme.of(context).textTheme.labelMedium,
+                                        controller: _nameController,
+                                        keyboardType: TextInputType.name,
+                                        textInputAction: TextInputAction.next,
+                                        decoration: InputDecoration(
+                                          labelText: "Name",
+                                          labelStyle: Theme.of(context).textTheme.labelMedium,
+                                          hintText: "Enter your name",
+                                          prefixIcon: const Icon(Icons.person),
+                                          border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          filled: true,
+                                          fillColor: const Color(0xFFFFE27C),
+                                          hintStyle: Theme.of(context).textTheme.labelMedium,
                                         ),
-                                        filled: true,
-                                        fillColor: const Color(0xFFFFE27C),
-                                        hintStyle: Theme.of(context).textTheme.labelMedium,
-                                      ),
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Please enter your name";
-                                        } else if (value.contains(" ")) {
-                                          return "Name can't contain space";
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please enter your name";
+                                          } else if (value.contains(" ")) {
+                                            return "Name can't contain space";
+                                          }
+                                          return null;
+                                        },
+                                        onEditingComplete: () {
+                                          if (_nameKey.currentState!.validate()==true) {
+                                            FocusScope.of(context).requestFocus(_emailFocus);
+                                          }
                                         }
-                                        return null;
-                                      },
-                                      onEditingComplete: () {
-                                        if (_nameKey.currentState!.validate()==true) {
-                                          FocusScope.of(context).requestFocus(_emailFocus);
-                                        }
-                                      }
+                                    ),
                                   ),
                                 ),
                               ),
@@ -221,39 +251,42 @@ class _SignUpPageState extends State<SignUpPage> {
                               height: 90,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                                child: Form(
-                                  key: _mailKey,
-                                  child: TextFormField(
-                                      focusNode: _emailFocus,
-                                      style: Theme.of(context).textTheme.labelMedium,
-                                      controller: _emailController,
-                                      keyboardType: TextInputType.emailAddress,
-                                      textInputAction: TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        labelText: "Email",
-                                        labelStyle: Theme.of(context).textTheme.labelMedium,
-                                        hintText: "Enter your email",
-                                        prefixIcon: const Icon(Icons.email),
-                                        border: const OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                child: Semantics(
+                                  label: "輸入使用者欲註冊的帳戶(信箱)的輸入框",
+                                  child: Form(
+                                    key: _mailKey,
+                                    child: TextFormField(
+                                        focusNode: _emailFocus,
+                                        style: Theme.of(context).textTheme.labelMedium,
+                                        controller: _emailController,
+                                        keyboardType: TextInputType.emailAddress,
+                                        textInputAction: TextInputAction.next,
+                                        decoration: InputDecoration(
+                                          labelText: "Email",
+                                          labelStyle: Theme.of(context).textTheme.labelMedium,
+                                          hintText: "Enter your email",
+                                          prefixIcon: const Icon(Icons.email),
+                                          border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(Radius.circular(20))
+                                          ),
+                                          filled: true,
+                                          fillColor: const Color(0xFFFFE27C),
+                                          hintStyle: Theme.of(context).textTheme.labelMedium,
                                         ),
-                                        filled: true,
-                                        fillColor: const Color(0xFFFFE27C),
-                                        hintStyle: Theme.of(context).textTheme.labelMedium,
-                                      ),
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return "Please enter your email";
-                                        } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-                                          return "Invalid email address";
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please enter your email";
+                                          } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                                            return "Invalid email address";
+                                          }
+                                          return null;
+                                        },
+                                        onEditingComplete: () {
+                                          if (_mailKey.currentState!.validate()==true) {
+                                            FocusScope.of(context).requestFocus(_passwordFocus);
+                                          }
                                         }
-                                        return null;
-                                      },
-                                      onEditingComplete: () {
-                                        if (_mailKey.currentState!.validate()==true) {
-                                          FocusScope.of(context).requestFocus(_passwordFocus);
-                                        }
-                                      }
+                                    ),
                                   ),
                                 ),
                               ),
@@ -261,44 +294,47 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(
                               height: 90,
                               child: Padding(
-                                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                                child: Form(
-                                  key: _passwordKey,
-                                  child: TextFormField(
-                                    focusNode: _passwordFocus,
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                    controller: _passwordController,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: true,
-                                    textInputAction: TextInputAction.done,
-                                    onEditingComplete: () {
-                                      if (_passwordKey.currentState!.validate()==true) {
-                                        FocusScope.of(context).requestFocus(_confirmPasswordFocus);
-                                      }
-                                    },
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your password";
-                                      } else if (value.length < 8) {
-                                        return "Password too short";
-                                      } else if (value.length > 30){
-                                        return "Password too long";
-                                      }else if (value.contains(" ")) {
-                                        return "Password cannot contain spaces";
-                                      } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
-                                        return "Password can't contain illegal characters";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: "Password",
-                                      labelStyle: Theme.of(context).textTheme.labelMedium,
-                                      hintText: "Enter your password",
-                                      prefixIcon: const Icon(Icons.lock),
-                                      filled: true,
-                                      fillColor: const Color(0xFFFFE27C),
-                                      border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                                padding: const EdgeInsets.only(left: 25, right: 25),
+                                child: Semantics(
+                                  label: "輸入使用者密碼的輸入框",
+                                  child: Form(
+                                    key: _passwordKey,
+                                    child: TextFormField(
+                                      focusNode: _passwordFocus,
+                                      style: Theme.of(context).textTheme.labelMedium,
+                                      controller: _passwordController,
+                                      keyboardType: TextInputType.visiblePassword,
+                                      obscureText: true,
+                                      textInputAction: TextInputAction.done,
+                                      onEditingComplete: () {
+                                        if (_passwordKey.currentState!.validate()==true) {
+                                          FocusScope.of(context).requestFocus(_confirmPasswordFocus);
+                                        }
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your password";
+                                        } else if (value.length < 8) {
+                                          return "Password too short";
+                                        } else if (value.length > 30){
+                                          return "Password too long";
+                                        }else if (value.contains(" ")) {
+                                          return "Password cannot contain spaces";
+                                        } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
+                                          return "Password can't contain illegal characters";
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: "Password",
+                                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                                        hintText: "Enter your password",
+                                        prefixIcon: const Icon(Icons.lock),
+                                        filled: true,
+                                        fillColor: const Color(0xFFFFE27C),
+                                        border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -309,45 +345,46 @@ class _SignUpPageState extends State<SignUpPage> {
                               height: 90,
                               child: Padding(
                                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                                child: Form(
-                                  key: _confirmPasswordKey,
-                                  child: TextFormField(
-                                    focusNode: _confirmPasswordFocus,
-                                    style: Theme.of(context).textTheme.labelMedium,
-                                    controller: _confirmPasswordController,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    obscureText: true,
-                                    textInputAction: TextInputAction.done,
-                                    onEditingComplete: () {
-                                      signup();
-                                    },
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please enter your password";
-                                      } else if (value.length < 8) {
-                                        return "Password too short";
-                                      } else if (value.length > 30){
-                                        return "Password too long";
-                                      }else if (value.contains(" ")) {
-                                        return "Password cannot contain spaces";
-                                      } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
-                                        return "Password can't contain illegal characters";
-                                      } else if (value!=_passwordController.text){
-                                        print(value);
-                                        print(_passwordController.text);
-                                        return "Password not match";
-                                      }
-                                      return null;
-                                    },
-                                    decoration: InputDecoration(
-                                      labelText: "Confirm Password",
-                                      labelStyle: Theme.of(context).textTheme.labelMedium,
-                                      hintText: "Enter your password again",
-                                      prefixIcon: const Icon(Icons.lock),
-                                      filled: true,
-                                      fillColor: const Color(0xFFFFE27C),
-                                      border: const OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                                child: Semantics(
+                                  label: "確認使用者密碼的輸入框",
+                                  child: Form(
+                                    key: _confirmPasswordKey,
+                                    child: TextFormField(
+                                      focusNode: _confirmPasswordFocus,
+                                      style: Theme.of(context).textTheme.labelMedium,
+                                      controller: _confirmPasswordController,
+                                      keyboardType: TextInputType.visiblePassword,
+                                      obscureText: true,
+                                      textInputAction: TextInputAction.done,
+                                      onEditingComplete: () {
+                                        checkState();
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please enter your password";
+                                        } else if (value.length < 8) {
+                                          return "Password too short";
+                                        } else if (value.length > 30){
+                                          return "Password too long";
+                                        }else if (value.contains(" ")) {
+                                          return "Password cannot contain spaces";
+                                        } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
+                                          return "Password can't contain illegal characters";
+                                        } else if (value!=_passwordController.text){
+                                          return "Password not match";
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: "Confirm Password",
+                                        labelStyle: Theme.of(context).textTheme.labelMedium,
+                                        hintText: "Enter your password again",
+                                        prefixIcon: const Icon(Icons.lock),
+                                        filled: true,
+                                        fillColor: const Color(0xFFFFE27C),
+                                        border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(Radius.circular(20))
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -377,25 +414,28 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ),
                                       Expanded(
                                         flex: 1,
-                                        child: ListView(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          children: [
-                                            CupertinoSlidingSegmentedControl(
-                                                backgroundColor: Colors.white,
-                                                thumbColor: const Color(0xFFFFE27C),
-                                                groupValue: groupValue,
-                                                children:{
-                                                  0: formatGenderUI(0),
-                                                  1: formatGenderUI(1),
-                                                  2: formatGenderUI(2)
-                                                },
-                                                onValueChanged: (value){
-                                                  setState(() {
-                                                    groupValue=value!;
-                                                  });
-                                                }
-                                            )
-                                          ],
+                                        child: Semantics(
+                                          label: "點擊以選擇使用者性別的選擇框",
+                                          child: ListView(
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            children: [
+                                              CupertinoSlidingSegmentedControl(
+                                                  backgroundColor: Colors.white,
+                                                  thumbColor: const Color(0xFFFFE27C),
+                                                  groupValue: groupValue,
+                                                  children:{
+                                                    0: formatGenderUI(0),
+                                                    1: formatGenderUI(1),
+                                                    2: formatGenderUI(2)
+                                                  },
+                                                  onValueChanged: (value){
+                                                    setState(() {
+                                                      groupValue=value!;
+                                                    });
+                                                  }
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -408,22 +448,22 @@ class _SignUpPageState extends State<SignUpPage> {
                       )
                   ),
                   loading?Container():Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    flex: 1,
+                    child: Semantics(
+                      label: "進行註冊的按鈕",
                       child: ElevatedButton(
                         onPressed: () {
                           signup();
                         },
                         style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)), // 设置背景颜色
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)),
                           shape: MaterialStateProperty.all<OutlinedBorder>(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
                           padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            const EdgeInsets.symmetric(horizontal: 50.0),
+                            const EdgeInsets.symmetric(horizontal: 50.0,vertical: 10.0),
                           ),
                         ),
                         child: Text("SIGN UP",style: Theme.of(context).textTheme.labelLarge,),
@@ -432,41 +472,49 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   defaultTargetPlatform==TargetPlatform.android && loading?
                   Container():
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    // margin: ,
-                    child: Center(
-                      child: Text("----- 第三方註冊 -----",style:Theme.of(context).textTheme.headlineSmall,),
-                    ),
-                  ),
-                  defaultTargetPlatform==TargetPlatform.android && loading?
-                  Container():
                   Expanded(
-                    flex: 1,
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ElevatedButton(onPressed: (){signInWithGoogle();},
-                            child: Image.asset(
-                              'assets/icons/google.png',
-                              height: 40.0,
-                              width: 40.0,
-                              fit: BoxFit.contain,
-                            )
-                            ,),
-                          ElevatedButton(onPressed: (){loginGithub();},
-                            child: Image.asset(
-                              'assets/icons/github.png',
-                              height: 40.0,
-                              width: 40.0,
-                              fit: BoxFit.contain,
-                            )
-                            ,),
-                        ],
-                      ),
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Semantics(label: "提示使用第三方註冊及登入的文字",child: Text("----- 第三方註冊 -----",style:Theme.of(context).textTheme.headlineSmall,)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Semantics(
+                              label: "使用 Google帳戶 進行註冊及登入的按鈕",
+                              child: ElevatedButton(
+                                onPressed: (){signInWithGoogle();},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    'assets/icons/google.png',
+                                    height: 40.0,
+                                    width: 40.0,
+                                    fit: BoxFit.contain,
+                                  ),
+                                )
+                              ),
+                            ),
+                            Semantics(
+                              label: "使用 GitHub帳戶 進行註冊及登入的按鈕",
+                              child: ElevatedButton(
+                                onPressed: (){loginGithub();},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    'assets/icons/github.png',
+                                    height: 40.0,
+                                    width: 40.0,
+                                    fit: BoxFit.contain,
+                                  ),
+                                )
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   )
                 ]

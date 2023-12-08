@@ -74,53 +74,62 @@ class _EditPreferencePageState extends State<EditPreferencePage> {
                 const TitleBarSubPage(title: "Edit Preference"),
                 Flexible(
                   flex:13,
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
-                    ),
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      bool isSelected = selectedItems.contains(data[index]);
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            if (isSelected) {
-                              selectedItems.remove(data[index]);
-                            } else {
-                              selectedItems.add(data[index]);
-                            }
-                          });
-                        },
-                        child: Card(
-                          color: isSelected ? Color(0xFFFFE27C) : null,
-                          child: Center(
-                            child: Text(genreIndexPair[data[index]]!),
+                  child: Semantics(
+                    label: "列出所有偏好項目",
+                    child: GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                      ),
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        bool isSelected = selectedItems.contains(data[index]);
+                        return Semantics(
+                          label: "此為偏好選擇按鈕按一下表示選擇再按一下視為取消",
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                if (isSelected) {
+                                  selectedItems.remove(data[index]);
+                                } else {
+                                  selectedItems.add(data[index]);
+                                }
+                              });
+                            },
+                            child: Card(
+                              color: isSelected ? const Color(0xFFFFE27C) : null,
+                              child: Center(
+                                child: Text(genreIndexPair[data[index]]!),
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Flexible(
                   flex:2,
                   child: Container(
                     alignment: Alignment.center,
-                    child: ElevatedButton(
-                        onPressed: (){edit();},
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
-                          shape: MaterialStateProperty.all<OutlinedBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                    child: Semantics(
+                      label: "送出修改偏好的按鈕",
+                      child: ElevatedButton(
+                          onPressed: (){edit();},
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
+                            shape: MaterialStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
                             ),
                           ),
-                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                            const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
-                          ),
-                        ),
-                        child: Text("EDIT",style: TextStyle(color: Colors.white),)
+                          child: const Text("EDIT",style: TextStyle(color: Colors.white),)
+                      ),
                     ),
                   ),
                 ),

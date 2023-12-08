@@ -54,36 +54,39 @@ class _FavoritePageState extends State<FavoritePage> {
           flex: 1,
           child: Container(
               alignment: Alignment.centerLeft,
-              child: Text("收藏的電影/影集",style: Theme.of(context).textTheme.titleSmall,)
+              child: Semantics(label:"此處列出所有收藏電影或影集的提示標籤",child: Text("收藏的電影/影集",style: Theme.of(context).textTheme.titleSmall,))
           ),
         ),
         Flexible(
           flex:14,
-          child: LiquidPullToRefresh(
-            animSpeedFactor:1.5,
-            color: Theme.of(context).canvasColor,
-            backgroundColor: const Color(0xFFFFE27C),
-            onRefresh: _refresh,
-            showChildOpacityTransition: true,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: (favoriteMovieProvider.movieList.length+1)~/2,
-              itemBuilder: (context, index) {
-                Movie firstMovie=favoriteMovieProvider.movieList[(index)*2];
-                Movie secondMovie=Movie(movieId: "",title: "",releaseYear:"",resource:"",score:0);
-                if (favoriteMovieProvider.movieList.length>(index)*2+1){
-                  secondMovie=favoriteMovieProvider.movieList[(index)*2+1];
-                }
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    DualImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
-                    secondMovie.movieId.isEmpty?
-                    Flexible(flex: 1,child: Container(),): DualImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
-                  ],
-                );
-              },
+          child: Semantics(
+            label: "此處為滑動視窗，列出使用者所有收藏電影或影集，滑到底部可以自動載入更多，同時往上滑動可以刷新頁面",
+            child: LiquidPullToRefresh(
+              animSpeedFactor:1.5,
+              color: Theme.of(context).canvasColor,
+              backgroundColor: const Color(0xFFFFE27C),
+              onRefresh: _refresh,
+              showChildOpacityTransition: true,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                controller: _scrollController,
+                itemCount: (favoriteMovieProvider.movieList.length+1)~/2,
+                itemBuilder: (context, index) {
+                  Movie firstMovie=favoriteMovieProvider.movieList[(index)*2];
+                  Movie secondMovie=Movie(movieId: "",title: "",releaseYear:"",resource:"",score:0);
+                  if (favoriteMovieProvider.movieList.length>(index)*2+1){
+                    secondMovie=favoriteMovieProvider.movieList[(index)*2+1];
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      DualImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
+                      secondMovie.movieId.isEmpty?
+                      Flexible(flex: 1,child: Container(),): DualImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         )

@@ -54,24 +54,27 @@ class _HotPageState extends State<HotPage> {
           flex: 1,
           child: Container(
               alignment: Alignment.centerLeft,
-              child: Text("近期熱門",style: Theme.of(context).textTheme.titleSmall,)
+              child: Semantics(label:"列出近期熱門電影或影集的提示標籤",child: Text("近期熱門",style: Theme.of(context).textTheme.titleSmall,))
           ),
         ),
         Flexible(
           flex:14,
-          child: LiquidPullToRefresh(
-            animSpeedFactor:1.5,
-            color: Theme.of(context).canvasColor,
-            backgroundColor: const Color(0xFFFFE27C),
-            onRefresh: _refresh,
-            showChildOpacityTransition: true,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: hotMovieProvider.movieList.length,
-              itemBuilder: (context, index) {
-                return SingleImageButton(movieId: hotMovieProvider.movieList[index].movieId,imageUrl: hotMovieProvider.movieList[index].resource,year: hotMovieProvider.movieList[index].releaseYear,title: hotMovieProvider.movieList[index].title,score: hotMovieProvider.movieList[index].score,);
-              },
+          child: Semantics(
+            label: "此處為滑動視窗，列出所有近期熱門電影或影集，滑到底部可以自動載入更多，同時往上滑動可以刷新頁面",
+            child: LiquidPullToRefresh(
+              animSpeedFactor:1.5,
+              color: Theme.of(context).canvasColor,
+              backgroundColor: const Color(0xFFFFE27C),
+              onRefresh: _refresh,
+              showChildOpacityTransition: true,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                controller: _scrollController,
+                itemCount: hotMovieProvider.movieList.length,
+                itemBuilder: (context, index) {
+                  return Semantics(label:"近期熱門的電影或影集項目",child: SingleImageButton(movieId: hotMovieProvider.movieList[index].movieId,imageUrl: hotMovieProvider.movieList[index].resource,year: hotMovieProvider.movieList[index].releaseYear,title: hotMovieProvider.movieList[index].title,score: hotMovieProvider.movieList[index].score,));
+                },
+              ),
             ),
           ),
         )

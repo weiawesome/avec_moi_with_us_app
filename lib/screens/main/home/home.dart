@@ -10,6 +10,7 @@ import "package:avec_moi_with_us/utils/routes.dart";
 import "package:avec_moi_with_us/widgets/image_button.dart";
 import "package:avec_moi_with_us/widgets/title.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
+import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
 import "package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart";
 import "package:provider/provider.dart";
@@ -37,7 +38,7 @@ class _IndexPageState extends State<IndexPage> {
   void initState() {
     super.initState();
     _scrollController= context.read<MovieScrollProvider>().scrollController;
-
+    context.read<RandomProvider>().randomState?groupValue=1:groupValue=0;
     searchState=false;
     _searchController.text="";
     _refresh();
@@ -60,6 +61,18 @@ class _IndexPageState extends State<IndexPage> {
       }
     });
 
+  }
+
+  Future<void> _refreshMovies(int value) async {
+    context.read<MovieProvider>().emptyMovie();
+    if (value==0){
+      context.read<RandomProvider>().randomSeed=0;
+      context.read<RandomProvider>().randomState=false;
+    } else if (value==1){
+      context.read<RandomProvider>().generateRandomSeed();
+      context.read<RandomProvider>().randomState=true;
+    }
+    context.read<MovieProvider>().insertMovie(await m.getMovie(1, context.read<RandomProvider>().randomSeed));
   }
 
   Future<void> _refresh() async {
@@ -112,10 +125,17 @@ class _IndexPageState extends State<IndexPage> {
     }
   }
 
+  late int groupValue;
+
+  Map<int,String> indexMode={
+    0:"評分排序",1:"隨機排序"
+  };
+  Widget formatOptionUI(int index){
+    return Container(padding: const EdgeInsets.symmetric(horizontal: 3,vertical: 3),child: Text(indexMode[index]!,style: Theme.of(context).textTheme.titleSmall));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final randomProvider = Provider.of<RandomProvider>(context);
     final movieProvider = Provider.of<MovieProvider>(context);
     final searchMovieProvider = Provider.of<SearchMovieProvider>(context);
     final recommendMovieProvider = Provider.of<RecommendMovieProvider>(context);
@@ -125,169 +145,177 @@ class _IndexPageState extends State<IndexPage> {
         Flexible(
           flex:2,
           child: Center(
-            child: TextField(
-              controller: _searchController,
-              style:  Theme.of(context).textTheme.labelSmall,
-              decoration: InputDecoration(
-                hintText: 'Search',
-                hintStyle: Theme.of(context).textTheme.labelSmall,
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
+            child: Semantics(
+              label: "搜尋電影或影集的輸入框",
+              child: TextField(
+                controller: _searchController,
+                style:  Theme.of(context).textTheme.labelSmall,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  hintStyle: Theme.of(context).textTheme.labelSmall,
+                  suffixIcon: Semantics(
+                    label: "取消搜尋的按鈕",
+                    child: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          searchState=false;
+                        });
+                        _refresh();
+                      },
+                    ),
+                  ),
+                  border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20))
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 20.0),
+                ),
+                onChanged: (value) {
+                  if (_searchController.text.isNotEmpty){
+                    setState(() {
+                      searchState=true;
+                    });
+                  } else{
                     setState(() {
                       searchState=false;
                     });
-                    _refresh();
-                  },
-                ),
-                border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20))
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 20.0),
+                  }
+                  search();
+                },
               ),
-              onChanged: (value) {
-                if (_searchController.text.isNotEmpty){
-                  setState(() {
-                    searchState=true;
-                  });
-                } else{
-                  setState(() {
-                    searchState=false;
-                  });
-                }
-                search();
-              },
             ),
           ),
         ),
         searchState?
         Flexible(
           flex: 13,
-          child: LiquidPullToRefresh(
-            animSpeedFactor:1.5,
-            color: Theme.of(context).canvasColor,
-            backgroundColor: const Color(0xFFFFE27C),
-            onRefresh: _refresh,
-            showChildOpacityTransition: true,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: (searchMovieProvider.movieList.length+1),
-              itemBuilder: (context, index) {
-                if (index==0){
-                  return Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text("搜尋內容 : ${_searchController.text}",style: Theme.of(context).textTheme.titleSmall,)
-                  );
-                }
-                else {
-                  return SingleImageButton(movieId: searchMovieProvider.movieList[index-1].movieId,imageUrl:searchMovieProvider.movieList[index-1].resource,year: searchMovieProvider.movieList[index-1].releaseYear,title: searchMovieProvider.movieList[index-1].title,score: searchMovieProvider.movieList[index-1].score,);
-                }
-              },
+          child: Semantics(
+            label: "此為可滑動視窗，滑動到最上方可以刷新查詢的結果頁面內容",
+            child: LiquidPullToRefresh(
+              animSpeedFactor:1.5,
+              color: Theme.of(context).canvasColor,
+              backgroundColor: const Color(0xFFFFE27C),
+              onRefresh: _refresh,
+              showChildOpacityTransition: true,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                controller: _scrollController,
+                itemCount: (searchMovieProvider.movieList.length+1),
+                itemBuilder: (context, index) {
+                  if (index==0){
+                    return Container(
+                        alignment: Alignment.centerLeft,
+                        child: Semantics(label:"顯示搜尋的項目",child: Text("搜尋內容 : ${_searchController.text}",style: Theme.of(context).textTheme.titleSmall,))
+                    );
+                  }
+                  else {
+                    return Semantics(label:"搜尋結果的電影或影集",child: SingleImageButton(movieId: searchMovieProvider.movieList[index-1].movieId,imageUrl:searchMovieProvider.movieList[index-1].resource,year: searchMovieProvider.movieList[index-1].releaseYear,title: searchMovieProvider.movieList[index-1].title,score: searchMovieProvider.movieList[index-1].score,));
+                  }
+                },
+              ),
             ),
           ),
         ):
         Flexible(
           flex:13,
-          child: LiquidPullToRefresh(
-            animSpeedFactor:1.5,
-            color: Theme.of(context).canvasColor,
-            backgroundColor: const Color(0xFFFFE27C),
-            onRefresh: _refresh,
-            showChildOpacityTransition: true,
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              controller: _scrollController,
-              itemCount: (movieProvider.movieList.length+1)~/2 + 3,
-              itemBuilder: (context, index) {
-                if (index==0){
-                  return Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Text("專屬推薦",style: Theme.of(context).textTheme.titleSmall,)
-                  );
-                }
-                else if (index == 1) {
-                  return recommendMovieProvider.movieList.isEmpty?
-                  const Text("在為您尋找推薦的電影..."):SizedBox(
-                    height: 250,
-                    child: ListView.builder(
-                      controller: _horizontalScrollController,
-                      scrollDirection: Axis.horizontal,
-                      itemCount: recommendMovieProvider.movieList.length,
-                      itemBuilder: (context, index) {
-                        return ImageButton(
-                          movieId: recommendMovieProvider.movieList[index].movieId,
-                          imageUrl: recommendMovieProvider.movieList[index].resource,
-                          year: recommendMovieProvider.movieList[index].releaseYear,
-                          title: recommendMovieProvider.movieList[index].title,
-                          score: recommendMovieProvider.movieList[index].score
-                          ,);
-                      },
-                    ),
-                  );
-                }
-                else if (index==2){
-                  return Container(
-                      alignment: Alignment.centerLeft,
-                      margin: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(flex:2,child: Text("電影/影集",style: Theme.of(context).textTheme.titleSmall,)),
-                          Flexible(
-                            flex:3,
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                    value: !randomProvider.randomState,
-                                    onChanged:  (val) async {
-                                      randomProvider.toggleState();
-                                      movieProvider.emptyMovie();
-                                      ResponseMovie result=await m.getMovie(1,randomProvider.randomSeed);
-                                      movieProvider.insertMovie(result);
-                                    }),
-                                Text("評分排序",style: Theme.of(context).textTheme.titleSmall,),
-                              ],
-                            ),
-                          ),
-                          Flexible(
-                            flex:3,
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                    value: randomProvider.randomState,
-                                    onChanged:  (val) async {
-                                      randomProvider.toggleState();
-                                      movieProvider.emptyMovie();
-                                      ResponseMovie result=await m.getMovie(1,randomProvider.randomSeed);
-                                      movieProvider.insertMovie(result);
-                                    }),
-                                Text("隨機排序",style: Theme.of(context).textTheme.titleSmall,),
-                              ],
-                            ),
-                          )
-                        ],
-                      )
-                  );
-                }
-                else {
-                  Movie firstMovie=movieProvider.movieList[(index-3)*2];
-                  Movie secondMovie=Movie(movieId: "",title: "",releaseYear:"",resource:"",score:0);
-                  if (movieProvider.movieList.length>(index-3)*2+1){
-                    secondMovie=movieProvider.movieList[(index-3)*2+1];
+          child: Semantics(
+            label: "此為可滑動視窗，滑動到最上方可以刷新推薦與排序內容",
+            child: LiquidPullToRefresh(
+              animSpeedFactor:1.5,
+              color: Theme.of(context).canvasColor,
+              backgroundColor: const Color(0xFFFFE27C),
+              onRefresh: _refresh,
+              showChildOpacityTransition: true,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                controller: _scrollController,
+                itemCount: (movieProvider.movieList.length+1)~/2 + 3,
+                itemBuilder: (context, index) {
+                  if (index==0){
+                    return Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(vertical: 2.5),
+                        child: Semantics(label:"此處為專屬推薦的提示文字",child: Text("專屬推薦",style: Theme.of(context).textTheme.titleSmall,))
+                    );
                   }
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      DualImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
-                      secondMovie.movieId.isEmpty?
-                      Container(width: 150,height: 200,margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),): DualImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
-                    ],
-                  );
-                }
-              },
+                  else if (index == 1) {
+                    return recommendMovieProvider.movieList.isEmpty?
+                    Semantics(label:"此為正在等待後端查詢結果的替代文字",child: const Text("在為您尋找推薦的電影...")):SizedBox(
+                      height: 250,
+                      child: Semantics(
+                        label: "此處為系統所推薦的電影或影集，可透過橫向滑動查看資訊",
+                        child: ListView.builder(
+                          controller: _horizontalScrollController,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: recommendMovieProvider.movieList.length,
+                          itemBuilder: (context, index) {
+                            return Semantics(
+                              label: "此處為推薦的電影或影集",
+                              child: ImageButton(
+                                movieId: recommendMovieProvider.movieList[index].movieId,
+                                imageUrl: recommendMovieProvider.movieList[index].resource,
+                                year: recommendMovieProvider.movieList[index].releaseYear,
+                                title: recommendMovieProvider.movieList[index].title,
+                                score: recommendMovieProvider.movieList[index].score
+                                ,),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  }
+                  else if (index==2){
+                    return Container(
+                        alignment: Alignment.centerLeft,
+                        margin: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Semantics(label:"表示列出以下電影或影集的標籤",child: Text("電影/影集",style: Theme.of(context).textTheme.titleSmall,)),
+                            Semantics(
+                              label: "用來選擇以下電影或影集以評分排序或是隨機排序",
+                              child: CupertinoSlidingSegmentedControl(
+                                  backgroundColor: Colors.white,
+                                  thumbColor: const Color(0xFFFFE27C),
+                                  groupValue: groupValue,
+                                  children:{
+                                    0: formatOptionUI(0),
+                                    1: formatOptionUI(1),
+                                  },
+                                  onValueChanged: (value){
+                                    setState(() {
+                                      groupValue=value!;
+                                      _refreshMovies(groupValue);
+                                    });
+                                  }
+                              ),
+                            )
+                          ],
+                        )
+                    );
+                  }
+                  else {
+                    Movie firstMovie=movieProvider.movieList[(index-3)*2];
+                    Movie secondMovie=Movie(movieId: "",title: "",releaseYear:"",resource:"",score:0);
+                    if (movieProvider.movieList.length>(index-3)*2+1){
+                      secondMovie=movieProvider.movieList[(index-3)*2+1];
+                    }
+                    return Semantics(
+                      label: "列出根據條件排序的電影或影集",
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          DualImageButton(movieId: firstMovie.movieId,imageUrl: firstMovie.resource,year: firstMovie.releaseYear,title: firstMovie.title,score: firstMovie.score,),
+                          secondMovie.movieId.isEmpty?
+                          Container(width: 150,height: 200,margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.5),): DualImageButton(movieId: secondMovie.movieId,imageUrl: secondMovie.resource,year: secondMovie.releaseYear,title: secondMovie.title,score: secondMovie.score,),
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         )

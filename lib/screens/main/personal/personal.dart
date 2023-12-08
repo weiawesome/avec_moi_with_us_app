@@ -51,83 +51,109 @@ class _PersonalPageState extends State<PersonalPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         const TitleBar(title: "Personal Information"),
         Flexible(
-          flex: 5,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 10.0,horizontal: 5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                gender=="male"?
-                Icon(Icons.face,size: 90,color: Colors.blueAccent,):
-                gender=="female"?
-                Icon(Icons.face_3,size: 90,color: Colors.pink,):Icon(Icons.person_outline_rounded,size: 90,color: Colors.black,),
-                Text(name,style: Theme.of(context).textTheme.displayMedium,)
-              ],
-            ),
-          ),
-        ),
-
-        Flexible(
-          flex: 8,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextButton(
-                  onPressed: (){
-                    Navigator.pushNamed(context, Routes.edit_information);
-                  },
-                  child: const Text("編輯個人資訊")
-                ),
-                const Divider(),
-                TextButton(
-                    onPressed: (){
-                      Navigator.pushNamed(context, Routes.edit_password);
-                    },
-                    child: const Text("更改密碼")
-                ),
-                const Divider(),
-                TextButton(
-                    onPressed: (){
-                      Navigator.pushNamed(context, Routes.edit_preference);
-                    },
-                    child: Text("更改偏好項目")
-                ),
-                const Divider(),
-                TextButton(
-                    onPressed: (){
-                      Navigator.pushNamed(context, Routes.history);
-                    },
-                    child:  const Text("歷史紀錄")
-                ),
-              ],
-            ),
-          ),
-        ),
-        Flexible(
-          flex:2,
-          child: ElevatedButton(
-              onPressed: (){logout();},
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
-                shape: MaterialStateProperty.all<OutlinedBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
+          flex:15,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                flex: 5,
+                child: Semantics(
+                  label: "個人名稱",
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        gender=="male"?
+                        const Icon(Icons.face,size: 90,color: Colors.blueAccent,):
+                        gender=="female"?
+                        const Icon(Icons.face_3,size: 90,color: Colors.pink,):
+                        const Icon(Icons.person_outline_rounded,size: 90,color: Colors.black,),
+                        Text(name,style: Theme.of(context).textTheme.headlineLarge,)
+                      ],
+                    ),
                   ),
                 ),
-                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+              ),
+              Flexible(
+                flex: 8,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Semantics(
+                        label: "前往更改個人資訊頁面的按鈕",
+                        child: TextButton(
+                            onPressed: (){
+                              Navigator.pushNamed(context, Routes.editInformation);
+                            },
+                            child: const Text("編輯個人資訊")
+                        ),
+                      ),
+                      const Divider(),
+                      Semantics(
+                        label: "前往更改密碼頁面的按鈕",
+                        child: TextButton(
+                            onPressed: (){
+                              Navigator.pushNamed(context, Routes.editPassword);
+                            },
+                            child: const Text("更改密碼")
+                        ),
+                      ),
+                      const Divider(),
+                      Semantics(
+                        label: "前往更改個人偏好項目頁面的按鈕",
+                        child: TextButton(
+                            onPressed: (){
+                              Navigator.pushNamed(context, Routes.editPreference);
+                            },
+                            child: const Text("更改偏好項目")
+                        ),
+                      ),
+                      const Divider(),
+                      Semantics(
+                        label: "前往查看個人瀏覽歷史紀錄頁面的按鈕",
+                        child: TextButton(
+                            onPressed: (){
+                              Navigator.pushNamed(context, Routes.history);
+                            },
+                            child:  const Text("歷史紀錄")
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: const Text("LOG OUT",style: TextStyle(color: Colors.white),)
-          ),
+              Flexible(
+                flex:2,
+                child: Semantics(
+                  label: "登出此應用程序的按鈕",
+                  child: ElevatedButton(
+                      onPressed: (){logout();},
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(const Color(0xA8FF0000)),
+                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+                        ),
+                      ),
+                      child: const Text("LOG OUT",style: TextStyle(color: Colors.white),)
+                  ),
+                ),
+              ),
+            ],
+          )
         ),
+
       ],
     );
   }

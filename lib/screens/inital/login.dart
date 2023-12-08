@@ -128,14 +128,17 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Expanded(
+                  Expanded(
                     flex: 3,
-                    child: Center(
-                      child: StrokeText(
-                        text: "Welcome !\nWith Us !",
-                        textStyle: TextStyle(fontFamily: "McLaren",color: Color(0xFF55E9D7), fontSize: 60, fontWeight: FontWeight.w400, height: 0,),
-                        strokeColor: Color.fromRGBO(255, 137, 137, 1),
-                        strokeWidth: 5,
+                    child: Semantics(
+                      label: "歡迎進入應用程序的標題",
+                      child: const Center(
+                        child: StrokeText(
+                          text: "Welcome !\nWith Us !",
+                          textStyle: TextStyle(fontFamily: "McLaren",color: Color(0xFF55E9D7), fontSize: 60, fontWeight: FontWeight.w400, height: 0,),
+                          strokeColor: Color.fromRGBO(255, 137, 137, 1),
+                          strokeWidth: 5,
+                        ),
                       ),
                     ),
                   ),
@@ -147,79 +150,85 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                            child: Form(
-                              key: _mailKey,
-                              child: TextFormField(
-                                  focusNode: _emailFocus,
-                                  style: Theme.of(context).textTheme.labelMedium,
-                                  controller: _emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.next,
-                                  decoration: InputDecoration(
-                                    labelText: "Email",
-                                    labelStyle: Theme.of(context).textTheme.labelMedium,
-                                    hintText: "Enter your email",
-                                    prefixIcon: const Icon(Icons.email),
-                                    border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(Radius.circular(20))
+                            child: Semantics(
+                              label: "輸入信箱(帳戶)的輸入框",
+                              child: Form(
+                                key: _mailKey,
+                                child: TextFormField(
+                                    focusNode: _emailFocus,
+                                    style: Theme.of(context).textTheme.labelMedium,
+                                    controller: _emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      labelText: "Email",
+                                      labelStyle: Theme.of(context).textTheme.labelMedium,
+                                      hintText: "Enter your email",
+                                      prefixIcon: const Icon(Icons.email),
+                                      border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(Radius.circular(20))
+                                      ),
+                                      filled: true,
+                                      fillColor: const Color(0xFFFFE27C),
+                                      hintStyle: Theme.of(context).textTheme.labelMedium,
                                     ),
-                                    filled: true,
-                                    fillColor: const Color(0xFFFFE27C),
-                                    hintStyle: Theme.of(context).textTheme.labelMedium,
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return "Please enter your email";
-                                    } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-                                      return "Invalid email address";
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please enter your email";
+                                      } else if (!RegExp(r"^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                                        return "Invalid email address";
+                                      }
+                                      return null;
+                                    },
+                                    onEditingComplete: () {
+                                      if (_mailKey.currentState!.validate()==true) {
+                                        FocusScope.of(context).requestFocus(_passwordFocus);
+                                      }
                                     }
-                                    return null;
-                                  },
-                                  onEditingComplete: () {
-                                    if (_mailKey.currentState!.validate()==true) {
-                                      FocusScope.of(context).requestFocus(_passwordFocus);
-                                    }
-                                  }
+                                ),
                               ),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 25, right: 25, bottom: 10),
-                            child: Form(
-                              key: _passwordKey,
-                              child: TextFormField(
-                                focusNode: _passwordFocus,
-                                style: Theme.of(context).textTheme.labelMedium,
-                                controller: _passwordController,
-                                keyboardType: TextInputType.visiblePassword,
-                                obscureText: true,
-                                textInputAction: TextInputAction.done,
-                                onEditingComplete: () {
-                                  login();
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Please enter your password";
-                                  } else if (value.length < 8) {
-                                    return "Password too short";
-                                  } else if (value.length > 30){
-                                    return "Password too long";
-                                  }else if (value.contains(" ")) {
-                                    return "Password cannot contain spaces";
-                                  } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
-                                    return "Password can't contain illegal characters";
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Password",
-                                  labelStyle: Theme.of(context).textTheme.labelMedium,
-                                  hintText: "Enter your password",
-                                  prefixIcon: const Icon(Icons.lock),
-                                  filled: true,
-                                  fillColor: const Color(0xFFFFE27C),
-                                  border: const OutlineInputBorder(
-                                      borderRadius: BorderRadius.all(Radius.circular(20))
+                            child: Semantics(
+                              label: "輸入密碼的輸入框",
+                              child: Form(
+                                key: _passwordKey,
+                                child: TextFormField(
+                                  focusNode: _passwordFocus,
+                                  style: Theme.of(context).textTheme.labelMedium,
+                                  controller: _passwordController,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  obscureText: true,
+                                  textInputAction: TextInputAction.done,
+                                  onEditingComplete: () {
+                                    login();
+                                  },
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Please enter your password";
+                                    } else if (value.length < 8) {
+                                      return "Password too short";
+                                    } else if (value.length > 30){
+                                      return "Password too long";
+                                    }else if (value.contains(" ")) {
+                                      return "Password cannot contain spaces";
+                                    } else if (!RegExp(r"^[a-zA-Z!@#$%^&*()_+-=]+").hasMatch(value)) {
+                                      return "Password can't contain illegal characters";
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: "Password",
+                                    labelStyle: Theme.of(context).textTheme.labelMedium,
+                                    hintText: "Enter your password",
+                                    prefixIcon: const Icon(Icons.lock),
+                                    filled: true,
+                                    fillColor: const Color(0xFFFFE27C),
+                                    border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(20))
+                                    ),
                                   ),
                                 ),
                               ),
@@ -234,40 +243,46 @@ class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        ElevatedButton(
-                          onPressed: login,
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF2F88FF)), // 设置背景颜色
-                            shape: MaterialStateProperty.all<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                        Semantics(
+                          label: "登入應用程序的按鈕",
+                          child: ElevatedButton(
+                            onPressed: login,
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF2F88FF)), // 设置背景颜色
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
                               ),
                             ),
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
-                            ),
+                            child: Text("LOGIN",style: Theme.of(context).textTheme.labelLarge,),
                           ),
-                          child: Text("LOGIN",style: Theme.of(context).textTheme.labelLarge,),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // signInWithGoogle();
-                            _emailController.clear();
-                            _passwordController.clear();
-                            Navigator.pushNamed(context, Routes.signup);
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)), // 设置背景颜色
-                            shape: MaterialStateProperty.all<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                        Semantics(
+                          label: "前往註冊畫面的按鈕",
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // signInWithGoogle();
+                              _emailController.clear();
+                              _passwordController.clear();
+                              Navigator.pushNamed(context, Routes.signup);
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)), // 设置背景颜色
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
                               ),
                             ),
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
-                            ),
+                            child: Text("SIGN UP",style: Theme.of(context).textTheme.labelLarge,),
                           ),
-                          child: Text("SIGN UP",style: Theme.of(context).textTheme.labelLarge,),
                         ),
                       ],
                     ),
@@ -277,7 +292,7 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
-                      child: Text("----- 第三方登入 -----",style:Theme.of(context).textTheme.headlineSmall,),
+                      child: Semantics(label:"提示使用第三方登入的文字",child: Text("----- 第三方登入 -----",style:Theme.of(context).textTheme.headlineSmall,)),
                     ),
                   ),
                   defaultTargetPlatform==TargetPlatform.android && loading?
@@ -288,24 +303,38 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        ElevatedButton(onPressed: (){
-                          signInWithGoogle();
-                          },
-                          child: Image.asset(
-                            'assets/icons/google.png',
-                            height: 40.0,
-                            width: 40.0,
-                            fit: BoxFit.contain,
-                          )
-                          ,),
-                        ElevatedButton(onPressed: (){loginGithub();},
-                          child: Image.asset(
-                            'assets/icons/github.png',
-                            height: 40.0,
-                            width: 40.0,
-                            fit: BoxFit.contain,
-                          )
-                          ,),
+                        Semantics(
+                          label: "使用 Google帳戶 進行登入的按鈕",
+                          child: ElevatedButton(
+                            onPressed: (){
+                            signInWithGoogle();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/icons/google.png',
+                                height: 40.0,
+                                width: 40.0,
+                                fit: BoxFit.contain,
+                              ),
+                            )
+                          ),
+                        ),
+                        Semantics(
+                          label: "使用 GitHub帳戶 進行登入的按鈕",
+                          child: ElevatedButton(
+                            onPressed: (){loginGithub();},
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                'assets/icons/github.png',
+                                height: 40.0,
+                                width: 40.0,
+                                fit: BoxFit.contain,
+                              ),
+                            )
+                          ),
+                        ),
                       ],
                     ),
                   )

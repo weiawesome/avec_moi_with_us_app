@@ -4,6 +4,7 @@ import "package:avec_moi_with_us/utils/exception.dart";
 import "package:avec_moi_with_us/widgets/celebrity.dart";
 import "package:avec_moi_with_us/widgets/title.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
+import "package:cached_network_image/cached_network_image.dart";
 import "package:flutter/material.dart";
 
 class SpecificMoviePage extends StatefulWidget {
@@ -79,10 +80,13 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                 loading?
                 Flexible(
                   flex:16,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const CircularProgressIndicator(
-                      color: Color(0xFFFD6868),
+                  child: Semantics(
+                    label: "正在載入時的畫面",
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const CircularProgressIndicator(
+                        color: Color(0xFFFD6868),
+                      ),
                     ),
                   ),
                 ): Flexible(
@@ -95,48 +99,33 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image.network(
-                                r.resource,
-                                width: 150,
-                                height: 200,
-                                fit: BoxFit.contain,
-                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  } else {
-                                    return const SizedBox(
-                                      height: 200,
-                                      width: 150,
-                                      child: Center(
-                                        widthFactor: 1,
-                                        heightFactor: 1,
-                                        child: CircularProgressIndicator(
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                                errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                                  return const SizedBox(
-                                      width: 150,
-                                      height: 200,
-                                      child: Icon(Icons.error,size: 50,)
-                                  );
-                                },
+                              Semantics(
+                                label:"此部電影或影集的圖片",
+                                child: CachedNetworkImage(
+                                  imageUrl:r.resource,
+                                  width: 200,
+                                  height: 250,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url)=> const SizedBox(height: 250, width: 200, child: Center(widthFactor: 1, heightFactor: 1, child: CircularProgressIndicator(),),),
+                                  errorWidget: (context, url, error)=> const SizedBox(height: 250, width: 200, child: Icon(Icons.error,size: 50,))
+                                ),
                               ),
-                              SizedBox(
-                                height: 200,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge,),
-                                    Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge,),
-                                    Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge,),
-                                  ],
+                              Semantics(
+                                label: "此部電影的基礎資訊",
+                                child: SizedBox(
+                                  height: 250,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Semantics(label:"此部電影或影集的片名",child: Text("片名 : ${r.title}", style: Theme.of(context).textTheme.bodyLarge,)),
+                                      Semantics(label:"此部電影或影集的原始片名",child: Text("原片名 : ${r.originalTitle}", style: Theme.of(context).textTheme.bodyLarge,)),
+                                      Semantics(label:"此部電影或影集的發行年分",child: Text("發行年分 : ${r.releaseYear}", style: Theme.of(context).textTheme.bodyLarge,)),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -148,20 +137,23 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("分類",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"顯示此部電影或影集分類的提示標籤",child: Text("分類",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.categories.map((e){
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20.0),
-                                          color: const Color(0xFFFFE27C)
+                                    return Semantics(
+                                      label: "此部電影的分類項目",
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                            color: const Color(0xFFFFE27C)
+                                        ),
+                                        margin: const EdgeInsets.only(right: 15.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                        child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
                                       ),
-                                      margin: const EdgeInsets.only(right: 15.0),
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                      child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
                                     );
                                   }).toList(),
                               ),
@@ -174,20 +166,23 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("其他譯名",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"此部電影或影集翻譯名稱的提示標籤",child: Text("其他譯名",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.titles.map((e){
-                                  return Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20.0),
-                                          color: const Color(0xFFFFE27C)
-                                      ),
-                                      margin: const EdgeInsets.only(right: 15.0),
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                      child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
+                                  return Semantics(
+                                    label: "此部電影或影集翻譯名稱項目",
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                            color: const Color(0xFFFFE27C)
+                                        ),
+                                        margin: const EdgeInsets.only(right: 15.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                        child: Text(e,style: Theme.of(context).textTheme.bodyMedium)
+                                    ),
                                   );
                                 }).toList(),
                               ),
@@ -200,20 +195,23 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("評分",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"此部電影或影集評分的提示標籤",child: Text("評分",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.rankScores.map((e){
-                                  return Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(20.0),
-                                          color: const Color(0xFFFFE27C)
-                                      ),
-                                      margin: const EdgeInsets.only(right: 15.0),
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
-                                      child: Text("${e.organization} : ${e.score} 分",style: Theme.of(context).textTheme.bodyMedium),
+                                  return Semantics(
+                                    label: "此部電影或影集的評分項目",
+                                    child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20.0),
+                                            color: const Color(0xFFFFE27C)
+                                        ),
+                                        margin: const EdgeInsets.only(right: 15.0),
+                                        padding: const EdgeInsets.symmetric(horizontal: 10.0,vertical: 5.0),
+                                        child: Text("${e.organization} : ${e.score} 分",style: Theme.of(context).textTheme.bodyMedium),
+                                    ),
                                   );
                                 }).toList(),
                               ),
@@ -226,9 +224,9 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("簡介",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"此部電影或影集的簡介提示標籤",child: Text("簡介",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
-                            Text(r.introduction==""?"未收錄":r.introduction,style: Theme.of(context).textTheme.bodyMedium),
+                            Semantics(label:"此部電影或影集的簡介",child: Text(r.introduction==""?"未收錄":r.introduction,style: Theme.of(context).textTheme.bodyMedium)),
                           ],
                         ),
                         Column(
@@ -237,13 +235,13 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("導演",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"此部電影或影集的導演提示標籤",child: Text("導演",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.directors.map((e){
-                                  return CelebrityWidget(imageUrl: e.resource, name: e.name);
+                                  return Semantics(label:"此部電影或影集的導演項目",child: CelebrityWidget(imageUrl: e.resource, name: e.name));
                                 }).toList(),
                               ),
                             )
@@ -255,13 +253,13 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Text("演員",style: Theme.of(context).textTheme.headlineMedium,),
+                              child: Semantics(label:"此部電影或影集的演員提示標籤",child: Text("演員",style: Theme.of(context).textTheme.headlineMedium,)),
                             ),
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: r.actors.map((e){
-                                  return CelebrityWidget(imageUrl: e.resource, name: e.name);
+                                  return Semantics(label:"此部電影或影集的演員項目",child: CelebrityWidget(imageUrl: e.resource, name: e.name));
                                 }).toList(),
                               ),
                             )
@@ -276,28 +274,31 @@ class _SpecificMoviePageState extends State<SpecificMoviePage> {
                     flex:2,
                     child: SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: (){
-                            setState(() {
-                              like=!like;
-                            });
-                            likeMovie();
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(const Color(
-                                0xFFFD6868)),
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+                      child: Semantics(
+                        label: "收藏或是取消收藏的按鈕",
+                        child: ElevatedButton(
+                            onPressed: (){
+                              setState(() {
+                                like=!like;
+                              });
+                              likeMovie();
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(const Color(
+                                  0xFFFD6868)),
+                              padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
-                              const Text("收藏"),
-                              like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
-                            ],
-                          ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
+                                const Text("收藏"),
+                                like?const Icon(Icons.favorite_outlined,size: 50,):const Icon(Icons.favorite_outline,size: 50,),
+                              ],
+                            ),
+                        ),
                       ),
                     )
                 ),

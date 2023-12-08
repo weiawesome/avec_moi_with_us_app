@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CelebrityWidget extends StatelessWidget {
@@ -16,36 +17,34 @@ class CelebrityWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Image.network(
-            imageUrl,
-            width: 100,
-            height: 150,
-            fit: BoxFit.contain,
-            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              } else {
+          Semantics(
+            label: "該名人物的圖像",
+            child: CachedNetworkImage(
+              imageUrl:imageUrl,
+              width: 100,
+              height: 150,
+              fit: BoxFit.contain,
+              placeholder: (context, url){
                 return const SizedBox(
                   width: 100,
                   height: 150,
                   child: Center(
                     widthFactor: 1,
                     heightFactor: 1,
-                    child: CircularProgressIndicator(
-                    ),
+                    child: CircularProgressIndicator(),
                   ),
                 );
-              }
-            },
-            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-              return const SizedBox(
-                  width: 100,
-                  height: 150,
-                  child: Icon(Icons.error,size: 50,)
-              );
-            },
+              },
+              errorWidget: (context, url, error){
+                return const SizedBox(
+                    width: 100,
+                    height: 150,
+                    child: Icon(Icons.error,size: 50,)
+                );
+              },
+            ),
           ),
-          Flexible(child: Text(name,style: Theme.of(context).textTheme.bodyMedium,overflow: TextOverflow.ellipsis,)),
+          Flexible(child: Semantics(label:"該名人物的名稱",child: Text(name,style: Theme.of(context).textTheme.bodyMedium,overflow: TextOverflow.ellipsis,))),
         ],
       ),
     );

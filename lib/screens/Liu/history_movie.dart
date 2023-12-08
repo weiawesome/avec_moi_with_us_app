@@ -95,7 +95,7 @@ class PopularMoviesPage extends StatelessWidget {
                 child: Text(
                   textAlign: TextAlign.center,
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,

@@ -16,47 +16,50 @@ class _CustomNavigate extends State<CustomNavigate> {
   @override
   Widget build(BuildContext context) {
     const double iconSize=35;
-    return BottomNavigationBar(
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined,size: iconSize,),
-          activeIcon: Icon(Icons.home_rounded,size: iconSize,),
-          label: '主頁',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.local_fire_department_outlined,size: iconSize),
-          activeIcon: Icon(Icons.local_fire_department_rounded,size: iconSize),
-          label: '近期熱門',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.bookmark_outline,size: iconSize),
-          activeIcon: Icon(Icons.bookmark,size: iconSize),
-          label: '你的收藏',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.account_circle_outlined,size: iconSize),
-          activeIcon: Icon(Icons.account_circle_rounded,size: iconSize),
-          label: '個人設定',
-        ),
-      ],
-      backgroundColor: Theme.of(context).canvasColor,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-      selectedItemColor: Theme.of(context).brightness== Brightness.dark?const Color.fromRGBO(217,217,217,1):Colors.black,
-      unselectedItemColor: const Color.fromRGBO(118,118,118,0.6),
-      onTap: (index) {
-        context.read<PageBloc>().add(pageEvents[index]);
-        if (index==0){
-          context.read<MovieScrollProvider>().scrollToTop();
-        } else if (index==1){
-          context.read<HotMovieScrollProvider>().scrollToTop();
-        } else if (index==2){
-          context.read<FavoriteMovieScrollProvider>().scrollToTop();
-        }
-      },
-      currentIndex: pageIndex[context.watch<PageBloc>().state]??0,
-      elevation: 0,
-      type: BottomNavigationBarType.fixed,
+    return Semantics(
+      label: "不同按鈕以前往不同頁面，再次點擊則回到該頁最上處，如已在頁面最上處則刷新此頁面",
+      child: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined,size: iconSize,),
+            activeIcon: Icon(Icons.home_rounded,size: iconSize,),
+            label: '主頁',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.local_fire_department_outlined,size: iconSize),
+            activeIcon: Icon(Icons.local_fire_department_rounded,size: iconSize),
+            label: '近期熱門',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark_outline,size: iconSize),
+            activeIcon: Icon(Icons.bookmark,size: iconSize),
+            label: '你的收藏',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle_outlined,size: iconSize),
+            activeIcon: Icon(Icons.account_circle_rounded,size: iconSize),
+            label: '個人設定',
+          ),
+        ],
+        backgroundColor: Theme.of(context).canvasColor,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedItemColor: Theme.of(context).brightness== Brightness.dark?const Color.fromRGBO(217,217,217,1):Colors.black,
+        unselectedItemColor: const Color.fromRGBO(118,118,118,0.6),
+        onTap: (index) {
+          context.read<PageBloc>().add(pageEvents[index]);
+          if (index==0){
+            context.read<MovieScrollProvider>().scrollToTop();
+          } else if (index==1){
+            context.read<HotMovieScrollProvider>().scrollToTop();
+          } else if (index==2){
+            context.read<FavoriteMovieScrollProvider>().scrollToTop();
+          }
+        },
+        currentIndex: pageIndex[context.watch<PageBloc>().state]??0,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+      ),
     );
   }
 }
