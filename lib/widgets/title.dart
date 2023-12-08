@@ -17,7 +17,7 @@ class TitleBar extends StatelessWidget {
 
         child: Text(title,style: Theme.of(context).textTheme.titleMedium,),
       ),
-    );;
+    );
   }
 }
 

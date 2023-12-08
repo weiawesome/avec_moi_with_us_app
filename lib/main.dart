@@ -11,14 +11,17 @@ import 'package:avec_moi_with_us/blocs/utils/bloc_navigator.dart';
 import 'package:avec_moi_with_us/screens/home.dart';
 import 'package:avec_moi_with_us/styles/custom_style.dart';
 import 'package:avec_moi_with_us/utils/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-
 import 'blocs/provider/favorite_movie_provider.dart';
 import 'blocs/provider/search_movie_provider.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
   runApp(
       MultiProvider(
         providers: [

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "487632279479",
+    "project_id": "avecmoiwithus",
+    "storage_bucket": "avecmoiwithus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487632279479:android:a048400ba2e21f11e43a32",
+        "android_client_info": {
+          "package_name": "com.avec_moi_with_us.avec_moi_with_us"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487632279479-8rt61r6i3ofvc4ndedg46l4uj3glc3rg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.avec_moi_with_us.avec_moi_with_us",
+            "certificate_hash": "d1e23bbd0a9178140b3959ea3cc1c91cb5eb334b"
+          }
+        },
+        {
+          "client_id": "487632279479-m8rj5usa76vt916hgices9joes2vflng.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzhcxMUqNuvsaBVtlOUW-aRvD-L3N3SHk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "487632279479-m8rj5usa76vt916hgices9joes2vflng.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "487632279479-l5do2cbqlhva2upqopkkg3gopvckhsvh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.avecMoiWithUs.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

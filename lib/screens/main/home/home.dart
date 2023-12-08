@@ -235,9 +235,9 @@ class _IndexPageState extends State<IndexPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Flexible(child: Text("電影/影集",style: Theme.of(context).textTheme.titleSmall,)),
-                          Flexible(child: Container()),
+                          Flexible(flex:2,child: Text("電影/影集",style: Theme.of(context).textTheme.titleSmall,)),
                           Flexible(
+                            flex:3,
                             child: Row(
                               children: [
                                 Checkbox(
@@ -253,6 +253,7 @@ class _IndexPageState extends State<IndexPage> {
                             ),
                           ),
                           Flexible(
+                            flex:3,
                             child: Row(
                               children: [
                                 Checkbox(

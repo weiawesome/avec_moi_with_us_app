@@ -6,12 +6,12 @@ class SignUpPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Center(
+            const Center(
               child: Column(
                 children: [
                   Text(
@@ -38,12 +38,12 @@ class SignUpPage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20.0), // 新增一个 SizedBox 来调整两个输入框之间的间距
-            Container(
+            const SizedBox(height: 20.0), // 新增一个 SizedBox 来调整两个输入框之间的间距
+            SizedBox(
               height: 50,
               width: 304,
               child: TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'email or phone number',
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.purple),
@@ -51,15 +51,15 @@ class SignUpPage extends StatelessWidget {
                   filled: true,
                   fillColor: Color(0x5A5200FF),
                 ),
-                style: TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 16.0),
               ),
             ),
-            SizedBox(height: 20.0), // 调整间距
-            Container(
+            const SizedBox(height: 20.0), // 调整间距
+            SizedBox(
               height: 50,
               width: 304,
               child: TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'password',
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.purple),
@@ -67,12 +67,12 @@ class SignUpPage extends StatelessWidget {
                   filled: true,
                   fillColor: Color(0x5A5200FF),
                 ),
-                style: TextStyle(fontSize: 16.0),
+                style: const TextStyle(fontSize: 16.0),
                 obscureText: true, // to hide the password
               ),
             ),
-            SizedBox(height: 20.0), // 调整间距
-            Container(
+            const SizedBox(height: 20.0), // 调整间距
+            SizedBox(
               height: 40,
               width: 211,
               child: ElevatedButton(
@@ -83,11 +83,11 @@ class SignUpPage extends StatelessWidget {
                   primary: Colors.black,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Color(0xF0FF0000)),
+                    side: const BorderSide(color: Color(0xF0FF0000)),
                   ),
-                  minimumSize: Size(211, 60),
+                  minimumSize: const Size(211, 60),
                 ),
-                child: Text(
+                child: const Text(
                   'confirm',
                   style: TextStyle(
                     color: Colors.white,

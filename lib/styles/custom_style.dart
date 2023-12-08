@@ -30,10 +30,8 @@ class LightStyle {
       displaySmall: TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors.black,fontWeight: FontWeight.w500,),
       // headlineLarge:TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors,fontWeight: FontWeight.w400,),
       headlineMedium:TextStyle(fontFamily: "McLaren",fontSize: 25,color: Colors.grey,fontWeight: FontWeight.w400,),
+      headlineSmall:TextStyle(fontFamily: "McLaren",fontSize: 30,color: Colors.white,fontWeight: FontWeight.w400,),
 
-
-
-      headlineSmall: TextStyle(color: Colors.black, fontSize:13,fontFamily: 'Play',fontWeight: FontWeight.bold),
     ),
   );
 }

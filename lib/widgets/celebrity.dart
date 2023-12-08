@@ -1,4 +1,3 @@
-import 'package:avec_moi_with_us/utils/routes.dart';
 import 'package:flutter/material.dart';
 
 class CelebrityWidget extends StatelessWidget {

@@ -1,10 +1,15 @@
+import "package:avec_moi_with_us/models/user/authentication/auth.dart";
 import "package:avec_moi_with_us/models/user/authentication/signup.dart";
 import "package:avec_moi_with_us/services/user/authentication.dart";
 import "package:avec_moi_with_us/utils/exception.dart";
+import "package:avec_moi_with_us/utils/routes.dart";
 import "package:avec_moi_with_us/widgets/loading.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/cupertino.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
+import "package:google_sign_in/google_sign_in.dart";
 
 
 class SignUpPage extends StatefulWidget {
@@ -87,6 +92,60 @@ class _SignUpPageState extends State<SignUpPage> {
     originalName="name";
     originalGender="male";
     groupValue=0;
+  }
+  Future<void> signInWithGoogle() async {
+    await GoogleSignIn().signOut();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    User? u = authResult.user;
+    setState(() {
+      loading=true;
+    });
+    AuthenticationService s=AuthenticationService();
+    try{
+      await s.auth(RequestAuth(u!.uid));
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushNamedAndRemoveUntil(context, Routes.search, (route) => false);
+    }on AuthException {
+      toastError(context,"驗證錯誤","帳號或密碼錯誤 請重新輸入");
+    } catch (e){
+      toastError(context,"未知錯誤", "請稍後再嘗試");
+    }
+    setState(() {
+      loading=false;
+    });
+  }
+  Future<void> loginGithub() async {
+    GithubAuthProvider githubProvider = GithubAuthProvider();
+    UserCredential r=await FirebaseAuth.instance.signInWithProvider(githubProvider);
+    User? u=r.user;
+    setState(() {
+      loading=true;
+    });
+    AuthenticationService s=AuthenticationService();
+    try{
+      await s.auth(RequestAuth(u!.uid));
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushNamedAndRemoveUntil(context, Routes.search, (route) => false);
+    }on AuthException {
+      toastError(context,"驗證錯誤","帳號或密碼錯誤 請重新輸入");
+    } catch (e){
+      toastError(context,"未知錯誤", "請稍後再嘗試");
+    }
+    setState(() {
+      loading=false;
+    });
+
   }
 
   @override
@@ -350,29 +409,66 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   loading?Container():Expanded(
                     flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            signup();
-                          },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)), // 设置背景颜色
-                            shape: MaterialStateProperty.all<OutlinedBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                            ),
-                            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 50.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          signup();
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFB169)), // 设置背景颜色
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                           ),
-                          child: Text("SIGN UP",style: Theme.of(context).textTheme.labelLarge,),
+                          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            const EdgeInsets.symmetric(horizontal: 50.0),
+                          ),
                         ),
-                      ],
+                        child: Text("SIGN UP",style: Theme.of(context).textTheme.labelLarge,),
+                      ),
                     ),
                   ),
+                  defaultTargetPlatform==TargetPlatform.android && loading?
+                  Container():
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    // margin: ,
+                    child: Center(
+                      child: Text("----- 第三方註冊 -----",style:Theme.of(context).textTheme.headlineSmall,),
+                    ),
+                  ),
+                  defaultTargetPlatform==TargetPlatform.android && loading?
+                  Container():
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ElevatedButton(onPressed: (){signInWithGoogle();},
+                            child: Image.asset(
+                              'assets/icons/google.png',
+                              height: 40.0,
+                              width: 40.0,
+                              fit: BoxFit.contain,
+                            )
+                            ,),
+                          ElevatedButton(onPressed: (){loginGithub();},
+                            child: Image.asset(
+                              'assets/icons/github.png',
+                              height: 40.0,
+                              width: 40.0,
+                              fit: BoxFit.contain,
+                            )
+                            ,),
+                        ],
+                      ),
+                    ),
+                  )
                 ]
             ),
           ),

@@ -2,7 +2,7 @@ name: avec_moi_with_us
 description: A movie and tv show recommendation app.
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.1.4 <4.0.0'
@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  google_sign_in: ^6.1.6
+  firebase_core: ^2.24.1
 
   cupertino_icons: ^1.0.2
   flutter_secure_storage: ^8.0.0
@@ -21,6 +23,7 @@ dependencies:
   cached_network_image: ^3.3.0
   liquid_pull_to_refresh: ^3.0.1
   toastification: ^1.1.0
+  firebase_auth: ^4.15.1
 
 dev_dependencies:
   flutter_test:
@@ -36,6 +39,8 @@ flutter:
   assets:
     - assets/icons/icon.png
     - assets/icons/icon_rounded.png
+    - assets/icons/google.png
+    - assets/icons/github.png
   fonts:
     - family: McLaren
       fonts:

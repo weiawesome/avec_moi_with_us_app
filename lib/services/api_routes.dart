@@ -2,6 +2,7 @@ class ApiRoutes{
   static const String apiBaseUrl="https://tcweeei.study-savvy.com/api/v1/";
 
   static const String userInformationUrl="${apiBaseUrl}user";
+  static const String userAuthUrl="${apiBaseUrl}user/auth/firebase";
   static const String signupUrl="${apiBaseUrl}user/signup";
   static const String loginUrl="${apiBaseUrl}user/login";
   static const String editInformationUrl="${apiBaseUrl}user/edit_info";

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:avec_moi_with_us/models/user/authentication/auth.dart';
 import 'package:avec_moi_with_us/models/user/authentication/login.dart';
 import 'package:avec_moi_with_us/models/user/authentication/signup.dart';
 import 'package:http/http.dart' as http;
@@ -23,6 +24,34 @@ class AuthenticationService {
       body: jsonEncode(data.formatJson()),
     );
 
+    if (response.statusCode == 200) {
+      Map<String,dynamic> result=jsonDecode(response.body);
+      ResponseLogin r=ResponseLogin.fromJson(result);
+      await jwtService.saveJwt(r.token);
+      return r;
+    }
+    else if(response.statusCode == 400){
+      throw ClientException("Invalid status value. RequestBody is not match request.");
+    }
+    else if (response.statusCode == 401){
+      throw AuthException("Unauthorized with information. User have not registered or with incorrect password.");
+    }
+    else if (response.statusCode == 500){
+      throw ServerException("System error.");
+    }
+    else{
+      throw Exception('Failed in unknown reason');
+    }
+  }
+  Future<ResponseLogin> auth(RequestAuth data) async {
+    final response = await httpClient.post(
+      Uri.parse(ApiRoutes.userAuthUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept':'application/json',
+      },
+      body: jsonEncode(data.formatJson()),
+    );
     if (response.statusCode == 200) {
       Map<String,dynamic> result=jsonDecode(response.body);
       ResponseLogin r=ResponseLogin.fromJson(result);

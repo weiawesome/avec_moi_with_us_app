@@ -1,12 +1,16 @@
+import "package:avec_moi_with_us/firebase_options.dart";
+import "package:avec_moi_with_us/models/user/authentication/auth.dart";
 import "package:avec_moi_with_us/models/user/authentication/login.dart";
 import "package:avec_moi_with_us/services/user/authentication.dart";
 import "package:avec_moi_with_us/utils/exception.dart";
 import "package:avec_moi_with_us/utils/routes.dart";
 import "package:avec_moi_with_us/widgets/loading.dart";
 import "package:avec_moi_with_us/widgets/toast_notification.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:stroke_text/stroke_text.dart";
-import "package:toastification/toastification.dart";
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -30,6 +34,59 @@ class _LoginPageState extends State<LoginPage> {
     _emailController.clear();
     _passwordController.clear();
     loading=false;
+  }
+  Future<void> signInWithGoogle() async {
+    await GoogleSignIn().signOut();
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    UserCredential authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    User? u = authResult.user;
+    setState(() {
+      loading=true;
+    });
+    AuthenticationService s=AuthenticationService();
+    try{
+      await s.auth(RequestAuth(u!.uid));
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushReplacementNamed(context, Routes.search);
+    }on AuthException {
+      toastError(context,"驗證錯誤","帳號或密碼錯誤 請重新輸入");
+    } catch (e){
+      toastError(context,"未知錯誤", "請稍後再嘗試");
+    }
+    setState(() {
+      loading=false;
+    });
+  }
+  Future<void> loginGithub() async {
+    GithubAuthProvider githubProvider = GithubAuthProvider();
+    UserCredential r=await FirebaseAuth.instance.signInWithProvider(githubProvider);
+    User? u=r.user;
+    setState(() {
+      loading=true;
+    });
+    AuthenticationService s=AuthenticationService();
+    try{
+      await s.auth(RequestAuth(u!.uid));
+      _emailController.clear();
+      _passwordController.clear();
+      Navigator.pushReplacementNamed(context, Routes.search);
+    }on AuthException {
+      toastError(context,"驗證錯誤","帳號或密碼錯誤 請重新輸入");
+    } catch (e){
+      toastError(context,"未知錯誤", "請稍後再嘗試");
+    }
+    setState(() {
+      loading=false;
+    });
   }
 
   Future<void> login() async {
@@ -59,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +252,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
+                            // signInWithGoogle();
                             _emailController.clear();
                             _passwordController.clear();
                             Navigator.pushNamed(context, Routes.signup);
@@ -214,9 +273,42 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
+                  defaultTargetPlatform==TargetPlatform.android && loading?
+                  Container():
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text("----- 第三方登入 -----",style:Theme.of(context).textTheme.headlineSmall,),
+                    ),
+                  ),
+                  defaultTargetPlatform==TargetPlatform.android && loading?
+                  Container():
                   Expanded(
                     flex: 1,
-                    child: Container(),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ElevatedButton(onPressed: (){
+                          signInWithGoogle();
+                          },
+                          child: Image.asset(
+                            'assets/icons/google.png',
+                            height: 40.0,
+                            width: 40.0,
+                            fit: BoxFit.contain,
+                          )
+                          ,),
+                        ElevatedButton(onPressed: (){loginGithub();},
+                          child: Image.asset(
+                            'assets/icons/github.png',
+                            height: 40.0,
+                            width: 40.0,
+                            fit: BoxFit.contain,
+                          )
+                          ,),
+                      ],
+                    ),
                   )
                 ]
             ),
