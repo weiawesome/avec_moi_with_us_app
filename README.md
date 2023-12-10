@@ -15,16 +15,16 @@ An application for recommend movies/tvs.
 
 ## User Interface
 ### Authentication (Login, Signup)
-![](./assets/ui-display/authentication.png)
+![](./assets/ui-display/authentiaction_plus.png)
 
 ### Primary Feature (Home, Recently Hot, Favorite, Information)
-![](./assets/ui-display/primary_feature.png)
+![](./assets/ui-display/primary_feature_plus.png)
 
 ### Setting (Edit Contact, Edit Password, Edit Preference, View History)
-![](./assets/ui-display/setting.png)
+![](./assets/ui-display/setting_plus.png)
 
 ### Movies / Tvs (Search, Specific)
-![](./assets/ui-display/movie_tv.png)
+![](./assets/ui-display/movie_tv_plus.png)
 ## Design Pattern
 ### MVC ( Model - View - Controller )
     ```
